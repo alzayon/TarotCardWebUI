@@ -1,11 +1,10 @@
 import { Component } from '@angular/core';
-import { Car } from 'app/domain/car';
-import { CarService} from 'app/services/carservice';
+import { Car } from '../../domain/car';
+import { CarService} from '../../services/carservice';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './app.component.html',
-  styleUrls: ['./app.component.css'],
+  templateUrl: './views/app.component.html',
   providers: [CarService]
 })
 export class AppComponent {

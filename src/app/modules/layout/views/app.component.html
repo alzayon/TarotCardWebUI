@@ -1,0 +1,133 @@
+
+
+
+
+<div id="header">
+    <h1>
+      <a href="#">Rokono</a>
+    </h1>
+    <navigation></navigation>
+  </div>
+  <!--end header-->
+
+
+
+
+
+
+  <div id="featured-section">
+    <h2>[ADD HEADLINE]</h2>
+
+    
+
+    <div id="circles">
+      <div class="red-circle circle first">
+        <h3>
+          <em>[ADD TITLE]</em>
+        </h3>
+        <p>[ADD OVERVIEW]</p>
+      </div>
+      <!--end red-circle-->
+      <div class="pink-circle circle">
+        <h3>
+          <em>[ADD TITLE]</em>
+        </h3>
+        <p>[ADD OVERVIEW]</p>
+      </div>
+      <!--end red-circle-->
+      <div class="orange-circle circle">
+        <h3>
+          <em>[ADD TITLE]</em>
+        </h3>
+        <p>[ADD OVERVIEW]</p>
+      </div>
+      <!--end red-circle-->
+      <div class="yellow-circle circle">
+        <h3>
+          <em>[ADD TITLE]</em>
+        </h3>
+        <p>[ADD OVERVIEW]</p>
+      </div>
+      <!--end red-circle-->
+    </div>
+    <!--end circles-->
+
+    <router-outlet></router-outlet>
+
+    <p-dataTable [value]="cars" selectionMode="single" [(selection)]="selectedCar" (onRowSelect)="onRowSelect($event)" [paginator]="true" rows="15" [responsive]="true">
+        <p-header>CRUD for Cars</p-header>
+        <p-column field="vin" header="Vin" [sortable]="true"></p-column>
+        <p-column field="year" header="Year" [sortable]="true"></p-column>
+        <p-column field="brand" header="Brand" [sortable]="true"></p-column>
+        <p-column field="color" header="Color" [sortable]="true"></p-column>
+        <p-footer><div class="ui-helper-clearfix" style="width:100%"><button type="button" pButton icon="fa-plus" style="float:left" (click)="showDialogToAdd()" label="Add"></button></div></p-footer>
+    </p-dataTable>
+    
+    <p-dialog header="Car Details" [(visible)]="displayDialog" [responsive]="true" showEffect="fade" [modal]="true">
+        <div class="ui-grid ui-grid-responsive ui-fluid" *ngIf="car">
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4"><label for="vin">Vin</label></div>
+                <div class="ui-grid-col-8"><input pInputText id="vin" [(ngModel)]="car.vin" /></div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4"><label for="year">Year</label></div>
+                <div class="ui-grid-col-8"><input pInputText id="year" [(ngModel)]="car.year" /></div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4"><label for="brand">Brand</label></div>
+                <div class="ui-grid-col-8"><input pInputText id="brand" [(ngModel)]="car.brand" /></div>
+            </div>
+            <div class="ui-grid-row">
+                <div class="ui-grid-col-4"><label for="color">Color</label></div>
+                <div class="ui-grid-col-8"><input pInputText id="color" [(ngModel)]="car.color" /></div>
+            </div>
+        </div>
+        <p-footer>
+            <div class="ui-dialog-buttonpane ui-helper-clearfix">
+                <button type="button" pButton icon="fa-close" (click)="delete()" label="Delete"></button>
+                <button type="button" pButton icon="fa-check" (click)="save()" label="Save"></button>
+            </div>
+        </p-footer>
+    </p-dialog>
+
+
+
+
+
+  </div>
+  <!--end featured-section-->
+
+
+
+
+
+  <div id="frontpage-main">
+    <div id="overview" class="frontpage-section">
+      <h3>[ADD TITLE]</h3>
+      <p>[ADD OVERVIEW]</p>
+      <ul class="blue-bullets">
+        <li>[ADD CONTENT]</li>
+        <li>[ADD CONTENT]</li>
+        <li>[ADD CONTENT]</li>
+        <li>[ADD CONTENT]</li>
+      </ul>
+    </div>
+    <!--end frontpage-content-->
+    <div id="latest-article" class="frontpage-section">
+      <h3>Latest Article</h3>
+      <a class="article-title" href="#">[ADD ARTICLE TITLE]</a>
+      <p class="meta">Posted By: [ADD AUTHOR NAME]</p>
+      <p>[ADD ARTICLE OVERVIEW]</p>
+      <a class="read-more" href="#">Read More &raquo;</a>
+    </div>
+    <!--end frontpage-sidebar-->
+  </div>
+  <!--end frontpage-main-->
+
+
+
+
+
+
+
+
