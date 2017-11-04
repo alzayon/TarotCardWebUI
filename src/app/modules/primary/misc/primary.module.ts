@@ -6,10 +6,10 @@ import { HttpModule } from '@angular/http';
 import { InputTextModule, ButtonModule, DataTableModule, DialogModule }  from 'primeng/primeng';
 import { RouterModule } from '@angular/router'
 
-import { appRoutes } from './routes';
+import { primaryRoutes } from './primary.routes';
 
-import { AppComponent } from './modules/layout/app.component';
-import { NavigationComponent } from './modules/layout/navigation.component';
+import { AppComponent } from '../app.component';
+import { NavigationComponent } from '../navigation.component';
 
 @NgModule({
   declarations: [
@@ -26,9 +26,9 @@ import { NavigationComponent } from './modules/layout/navigation.component';
     DialogModule,
     ButtonModule,
 
-    RouterModule.forRoot(appRoutes)
+    RouterModule.forRoot(primaryRoutes)
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class PrimaryModule { }
