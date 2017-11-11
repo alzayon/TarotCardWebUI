@@ -13,7 +13,7 @@ URL:http://www.chris-creed.com
 /* -- General Styles -- */
 /* -------------------- */
 #wrap{
-	width:960px;
+	
 	margin:0 auto;
 }
 body{
@@ -84,6 +84,7 @@ em{
 	padding:30px 0 0 0;
 	height:70px;
 	border-bottom:1px #ddd dotted;
+	box-sizing: content-box; /** --lexi **/
 }
 #header h1{
 	float:left;
@@ -196,6 +197,7 @@ em{
 	text-align:center;
 	color:#eee;
 	padding:0 15px;
+	box-sizing: content-box;  /** --lexi **/
 }
 .circle h3{
 	margin-top:45px;
@@ -267,7 +269,7 @@ em{
 	background:url(/assets/images/rokono/blue-bullet.png) no-repeat;
 	height:21px;
 	position:relative;
-	padding:0 0 18px 35px;
+	padding:0 0 38px 35px;
 }
 /* ------------- */
 /* -- Content -- */

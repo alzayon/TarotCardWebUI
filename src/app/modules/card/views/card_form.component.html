@@ -1,3 +1,40 @@
-<div>
-    <h2>Card Form</h2>
-</div>
+<form class="form-horizontal" novalidate (ngSubmit)="save()" [formGroup]="mainFormGroup">
+    <fieldset>
+
+
+        <div class="form-group" [ngClass]="{'has-error': displayMessage.cardName }">
+            <label class="col-md-2 control-label" for="cardNameId">
+                Card Name
+            </label>
+            <div class="col-md-10">
+                <input class="form-control" id="cardNameId" type="text" placeholder="Name (required)" 
+                 formControlName="cardName" />
+                <span class="help-block" *ngIf="displayMessage.cardName">
+                    {{displayMessage.cardName}}
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group" [ngClass]="{'has-error': displayMessage.cardType }">
+            <label class="col-md-2 control-label" for="cardTypeId">
+                Type
+            </label>
+            <div class="col-md-10">
+                <p-dropdown [options]="cardTypesList" formControlName="cardType"></p-dropdown>
+                <span class="help-block" *ngIf="displayMessage.cardType">
+                    {{displayMessage.cardType}}
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-4 col-md-offset-2">
+                <span>
+                    <button class="btn btn-primary" type="submit" style="width:80px;margin-right:10px">
+                        Save
+                    </button>
+                </span>
+            </div>
+        </div>
+    </fieldset>
+</form>

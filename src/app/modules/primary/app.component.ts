@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Car } from '../../domain/car';
-import { CarService} from '../../services/carservice';
+import { CarService} from '../../services/api/carservice';
 
 @Component({
   selector: 'app-root',

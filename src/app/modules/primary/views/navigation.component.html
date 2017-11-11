@@ -1,7 +1,7 @@
 <div id="nav">
     <ul class="menu">
         <li class="current_page_item">
-            <a href="index.html">Home</a>
+            <a [routerLink]="['/card/list']">Home</a>
         </li>
         <li>
             <a [routerLink]="['/card/list']">Cards</a>
@@ -15,7 +15,7 @@
             </ul>
         </li>
         <li>
-            <a href="/category">Categories</a>
+            <a [routerLink]="['/category/list']">Categories</a>
             <ul class="sub-menu">
                 <li>
                     <a [routerLink]="['/category/list']">List</a>
@@ -26,7 +26,7 @@
             </ul>
         </li>
         <li>
-            <a href="/meaning">Meaning</a>
+            <a [routerLink]="['/meaning/list']">Meaning</a>
             <ul class="sub-menu">
                 <li>
                     <a [routerLink]="['/meaning/list']">List</a>
@@ -37,7 +37,7 @@
             </ul>
         </li>
         <li>
-            <a href="/reading">Readings</a>
+            <a [routerLink]="['/reading/list']">Readings</a>
             <ul class="sub-menu">
                 <li>
                     <a [routerLink]="['/reading/list']">List</a>
@@ -48,7 +48,7 @@
             </ul>
         </li>
         <li>
-            <a href="/reading_session">Reading Sessions</a>
+            <a [routerLink]="['/reading-session/list']">Reading Sessions</a>
             <ul class="sub-menu">
                 <li>
                     <a [routerLink]="['/reading-session/list']">List</a>
@@ -59,7 +59,7 @@
             </ul>
         </li>
         <li>
-            <a href="/spread">Spreads</a>
+            <a [routerLink]="['/spread/list']">Spreads</a>
             <ul class="sub-menu">
                 <li>
                     <a [routerLink]="['/spread/list']">List</a>
@@ -70,7 +70,7 @@
             </ul>
         </li>
         <li>
-            <a href="/spread_component">Spread Components</a>
+            <a [routerLink]="['/spread-component/list']">Spread Components</a>
             <ul class="sub-menu">
                 <li>
                     <a [routerLink]="['/spread-component/list']">List</a>
@@ -85,3 +85,4 @@
     </ul>
 </div>
 <!--end nav-->
+

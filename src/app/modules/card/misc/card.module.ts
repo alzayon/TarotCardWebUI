@@ -3,6 +3,8 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { DropdownModule } from 'primeng/primeng';
+
 import { cardRoutes } from './card.routes';
 
 import { CardAddComponent } from '../card_add.component';
@@ -11,20 +13,24 @@ import { CardListComponent } from '../card_list.component';
 import { CardViewComponent } from '../card_view.component';
 import { CardFormComponent } from '../card_form.component';
 
+
 @NgModule({
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forChild(cardRoutes)
+    RouterModule.forChild(cardRoutes),
+    DropdownModule
   ],
   declarations: [
     CardAddComponent,
     CardEditComponent,
     CardListComponent,
     CardViewComponent,
-    CardFormComponent
+    CardFormComponent    
   ],
-  providers: []
+  providers: [
+    
+  ]
 })
 export class CardModule { };
