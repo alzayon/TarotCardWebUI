@@ -15,7 +15,9 @@ import { FormBuilder,
 import { ActivatedRoute, Router  } from '@angular/router';
 
 import { CardType } from '../../domain/enums/card_type';
-import { EnumToList } from '../../domain/helpers/enum_to_list';
+import { EnumHelper } from '../../domain/helpers/enum_helper';
+import { CardEventBus } from './misc/card_event_bus';
+import { CardEventType } from './misc/card_event_type';
 
 @Component({
     selector: 'card-form',
@@ -23,7 +25,6 @@ import { EnumToList } from '../../domain/helpers/enum_to_list';
 })
 export class CardFormComponent implements OnInit {
     
-
     mainFormGroup: FormGroup;
     selectedCartType: string;
     cardTypesList:Array<any> = [];
@@ -32,16 +33,19 @@ export class CardFormComponent implements OnInit {
     displayMessage: { [key: string]: string } = {};
 
     constructor(private fb: FormBuilder,
-        private route: ActivatedRoute) {
+        private route: ActivatedRoute,
+        private cardEventBus:CardEventBus) {
 
         }
     
     save(): void {
-        console.log("saving entity...");
+        let formValue = this.mainFormGroup.value;
+        this.cardEventBus.publish(CardEventType.BEGIN_SAVE, 
+            formValue);
     }
 
     ngOnInit(): void {
-        this.cardTypesList = EnumToList.toList(CardType)
+        this.cardTypesList = EnumHelper.toList(CardType)
                                 .map((obj) => {
                                     return { label : obj, value : obj };
                                 });

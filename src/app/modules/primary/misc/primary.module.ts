@@ -6,6 +6,8 @@ import { HttpModule,
          RequestOptions } from '@angular/http';
 import { InputTextModule, ButtonModule, DataTableModule, DialogModule }  from 'primeng/primeng';
 import { RouterModule } from '@angular/router'
+import { GrowlModule } from 'primeng/primeng';
+import { MessageService } from 'primeng/components/common/messageservice';
 
 import * as lodash from 'lodash';
 
@@ -16,8 +18,6 @@ import { DefaultRequestOptionsService } from '../../../services/api/general/defa
 import { CardService } from '../../../services/api/card.service';
 import { ENVIRONMENT_CONFIG, __ } from './tokens';
 import { environment } from '../../../../environments/environment';
-
-
 
 @NgModule({
   declarations: [
@@ -33,14 +33,15 @@ import { environment } from '../../../../environments/environment';
     InputTextModule, 
     DialogModule,
     ButtonModule,
-
+    GrowlModule,
     RouterModule.forRoot(primaryRoutes)
   ],
   providers: [
     { provide: ENVIRONMENT_CONFIG, useValue: environment },
     { provide: __, useValue: lodash },
     { provide: RequestOptions, useClass: DefaultRequestOptionsService },
-    CardService
+    CardService,
+    MessageService
   ],
   bootstrap: [AppComponent]
 })

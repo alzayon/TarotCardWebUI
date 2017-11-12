@@ -11,6 +11,7 @@ export abstract class BaseService {
     }
 
     protected handleError(error: Response): Observable<any> {
+        console.log("Error in service " + error);
         return Observable.throw(error.json().message || 'Server error');
     }
 }
