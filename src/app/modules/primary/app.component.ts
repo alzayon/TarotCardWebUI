@@ -1,11 +1,19 @@
-import { Component } from '@angular/core';
+import { Component,
+    OnInit, 
+    AfterViewInit,
+    OnDestroy  } from '@angular/core';   
+import { Subscription } from 'rxjs/Subscription';
+
 import { Car } from '../../domain/car';
 import { CarService} from '../../services/api/carservice';
+import { PrimaryEventBus } from './misc/primary_event_bus';
+import { PrimaryEventType } from './misc/primary_event_type';
 
 @Component({
   selector: 'app-root',
   templateUrl: './views/app.component.html',
-  providers: [CarService]
+  providers: [ CarService,
+    PrimaryEventBus ]
 })
 export class AppComponent {
     
@@ -19,10 +27,35 @@ export class AppComponent {
 
     cars: Car[];
 
-    constructor(private carService: CarService) { }
+    private subscriptions:Array<Subscription> = [];
+    private heading:String = "Heading";
+
+    constructor(private carService: CarService,
+                private primaryEventBus: PrimaryEventBus) { }
 
     ngOnInit() {
+        let self = this;
         this.carService.getCarsSmall().then(cars => this.cars = cars);
+        let subscription = 
+            this.primaryEventBus.eventObservable
+                    .subscribe((v) => {
+                        let eventType = v.value1;
+                        switch(eventType) {
+                            case PrimaryEventType.UPDATE_LAYOUT_VALUES:
+                                let values = v.value2;                         
+                                if (values.heading) {
+                                    self.heading = values.heading;
+                                }                       
+                        }  
+            });
+
+        this.subscriptions.push(subscription);    
+    }
+
+    ngOnDestroy(): void {
+        for(let s of this.subscriptions) {
+            s.unsubscribe();
+        }
     }
     
     showDialogToAdd() {

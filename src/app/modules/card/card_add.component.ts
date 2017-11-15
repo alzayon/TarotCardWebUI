@@ -1,7 +1,9 @@
 import { Component,
          OnInit, 
-         AfterViewInit,  } from '@angular/core';         
+         AfterViewInit,
+         OnDestroy  } from '@angular/core';         
 import { Router, ActivatedRoute } from '@angular/router';
+import { Subscription } from 'rxjs/Subscription';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
@@ -10,6 +12,8 @@ import { CardEventBus } from './misc/card_event_bus';
 import { Card } from '../../domain/model/card';
 import { CardType } from '../../domain/enums/card_type';
 import { CardEventType } from './misc/card_event_type';
+import { CardBaseComponent } from './card_base.component';
+import { PrimaryEventBus } from '../primary/misc/primary_event_bus';
 
 @Component({
     selector: 'card-add',
@@ -18,26 +22,39 @@ import { CardEventType } from './misc/card_event_type';
         CardEventBus
     ]
 })
-export class CardAddComponent implements OnInit {
+export class CardAddComponent extends CardBaseComponent implements OnInit {
+
+    private subscriptions:Array<Subscription> = [];
 
     constructor(private cardService: CardService,
         private cardEventBus:CardEventBus,
+        private primaryEventBus:PrimaryEventBus,
         private messageService:MessageService,
         private router:Router) {
+            super(primaryEventBus);            
     }
     
-    ngOnInit(): void {        
-        this.cardEventBus
-            .eventObservable.subscribe((v) => {
-                    let eventType = v.value1;
-                    switch(eventType) {
-                        case CardEventType.BEGIN_SAVE:
-                            let formState = v.value2;                         
-                            this.saveEventHandler(formState);
-                            break;                        
-                    }                            
-                });        
+    ngOnInit(): void {
+        super.ngOnInit();                
+        let subscription = this.cardEventBus.eventObservable.subscribe(
+            (v) => {
+                let eventType = v.value1;
+                switch(eventType) {
+                    case CardEventType.BEGIN_SAVE:
+                        let formState = v.value2;                         
+                        this.saveEventHandler(formState);
+                        break;                        
+                }                            
+            }); 
+        this.subscriptions.push(subscription);                                   
     }    
+
+    ngOnDestroy(): void {
+        super.ngOnDestroy();
+        for(let s of this.subscriptions) {
+            s.unsubscribe();
+        }
+    }
 
     private saveEventHandler(formState: any) {  
         let self = this;
@@ -66,20 +83,22 @@ export class CardAddComponent implements OnInit {
     private save(card: Card) {
         let self = this;
         this.cardService.add(card)
-                .subscribe((r) => {
-                    console.log("Card add response " + r);
-                    self.messageService.add({ 
-                        severity: 'success', 
-                        summary: 'Success', 
-                        detail: 'Successfully added the card!'});
-                    self.router.navigate(['/card/list']);     
-                },
-                (e) => {
-                    console.log("Error in adding card " + e);    
-                    self.messageService.add({
-                        severity: 'error', 
-                        summary: 'Server Error', 
-                        detail: 'There was a problem saving.'});
-                });   
+                .subscribe(
+                    (r) => {                    
+                        self.messageService.add({ 
+                            severity: 'success', 
+                            summary: 'Success', 
+                            detail: 'Successfully saved!'});
+                            
+                        //TODO
+                        //Redirect to detail page    
+                        self.router.navigate(['/card/list']);     
+                    },
+                    (e) => {  
+                        self.messageService.add({
+                            severity: 'error', 
+                            summary: 'Server Error', 
+                            detail: 'There was a problem saving.'});
+                    });   
     }
 }

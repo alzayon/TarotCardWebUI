@@ -8,6 +8,6 @@ import { CardViewComponent }  from '../card_view.component';
 export const cardRoutes = [
     { path: 'list', component: CardListComponent },
     { path: 'add', component: CardAddComponent },
-    { path: 'edit', component: CardEditComponent },
+    { path: 'edit/:id', component: CardEditComponent },
     { path: 'view', component: CardViewComponent }
   ];

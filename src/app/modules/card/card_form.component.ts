@@ -24,6 +24,7 @@ import { EnumHelper } from '../../domain/helpers/enum_helper';
 import { CardEventBus } from './misc/card_event_bus';
 import { CardEventType } from './misc/card_event_type';
 import { ValidationCollectorService } from '../../services/validators/validation_collector.service';
+import { Card } from '../../domain/model/card';
 
 @Component({
     selector: 'card-form',
@@ -85,6 +86,20 @@ export class CardFormComponent implements OnInit {
                                Validators.maxLength(50)]],
             cardType: [CardType.MAJOR_ARCANA, [Validators.required]]                   
         });
+
+        this.cardEventBus.eventObservable
+                .subscribe(
+                    (v) => {
+                        let eventType = v.value1;
+                        let model = v.value2;
+                        switch(eventType) {
+                            case CardEventType.POPULATE_FORM:
+                                this.mainFormGroup.reset();
+                                this.populateForm(model);
+                                break;                        
+                        } 
+                    }
+                );
     }
 
     ngAfterViewInit(): void {
@@ -98,6 +113,14 @@ export class CardFormComponent implements OnInit {
                   .debounceTime(400).subscribe(value => {
                         this.errorMessagesFound = 
                             this.validationCollector.processMessages(this.mainFormGroup);
+        });
+    }
+
+    private populateForm(card:Card) {
+        // Update the data on the form
+        this.mainFormGroup.patchValue({
+            cardName: card.name,
+            cardType: CardType[card.type]
         });
     }
 
