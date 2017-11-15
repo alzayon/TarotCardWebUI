@@ -2,7 +2,9 @@ import { FormGroup } from '@angular/forms';
 
 // Generic validator for Reactive forms
 // Implemented as a class, not a service, so it can retain state for multiple forms.
-export class ValidationCollector {
+export class ValidationCollectorService {
+
+    private validationMessages: { [key: string]: { [key: string]: string } };
 
     // Provide the set of valid validation messages
     // Stucture:
@@ -14,8 +16,12 @@ export class ValidationCollector {
     //     validationRuleName1: 'Validation Message.',
     //     validationRuleName2: 'Validation Message.'
     // }
-    constructor(private validationMessages: { [key: string]: { [key: string]: string } }) {
+    constructor() {
 
+    }    
+
+    setValidationMessages(validationMessages: { [key: string]: { [key: string]: string } }) {
+        this.validationMessages = validationMessages;
     }
 
     // Processes each control within a FormGroup

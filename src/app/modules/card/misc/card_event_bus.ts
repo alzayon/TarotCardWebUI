@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
 import { Subject } from 'rxjs/Subject';
 
-import { Pair } from '../../../general/pair';
+import { Pair } from '../../../common/pair';
 import { CardEventType } from '../misc/card_event_type';
 
 
