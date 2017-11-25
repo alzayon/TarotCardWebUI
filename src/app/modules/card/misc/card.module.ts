@@ -1,9 +1,10 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-
+import { FormsModule, 
+         ReactiveFormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/primeng';
+import { DataTableModule, SharedModule } from 'primeng/primeng';
 
 import { cardRoutes } from './card.routes';
 
@@ -20,7 +21,9 @@ import { CardFormComponent } from '../card_form.component';
     FormsModule,
     ReactiveFormsModule,
     RouterModule.forChild(cardRoutes),
-    DropdownModule
+    DropdownModule,
+    DataTableModule,
+    SharedModule
   ],
   declarations: [
     CardAddComponent,

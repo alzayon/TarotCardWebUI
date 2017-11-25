@@ -118,8 +118,7 @@ export class CardEditComponent extends CardBaseComponent {
                 severity: 'error', 
                 summary: 'Error', 
                 detail: 'Please enter valid values.'});
-        }
-                      
+        }                      
     }
     
     private onModelRetreived(card:Card) {
