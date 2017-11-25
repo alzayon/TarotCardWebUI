@@ -9,5 +9,5 @@ export const cardRoutes = [
     { path: 'list', component: CardListComponent },
     { path: 'add', component: CardAddComponent },
     { path: 'edit/:id', component: CardEditComponent },
-    { path: 'view', component: CardViewComponent }
+    { path: ':id', component: CardViewComponent }
   ];

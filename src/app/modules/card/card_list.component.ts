@@ -1,6 +1,9 @@
 import { Component,
-    OnInit, 
-    AfterViewInit,  } from '@angular/core';
+         OnInit, 
+         AfterViewInit,  } from '@angular/core';
+import { Router, 
+         ActivatedRoute } from '@angular/router';
+
 import { CardService } from '../../services/api/card.service';
 import { Card } from '../../domain/model/card';
 
@@ -12,11 +15,12 @@ export class CardListComponent {
 
     cards: Array<Card> = [];
 
-    constructor(private cardService:CardService) {
+    constructor(private cardService:CardService,
+        private router:Router) {
 
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
         let self = this;
         this.cardService.list()
             .subscribe(
@@ -27,4 +31,15 @@ export class CardListComponent {
             );
     }
 
+    goToView(card:Card) {
+        this.router.navigate(['/card', card.id]);
+    }
+
+    goToEdit(card:Card) {
+        this.router.navigate(['/card/edit', card.id]);
+    }
+
+    delete(card:Card) {
+        console.log("deleting");
+    }
 }

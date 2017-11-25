@@ -1,7 +1,40 @@
 <div>
     <h2>Card List</h2>
     <p-dataTable [value]="cards">
-        <p-column field="id" header="Id"></p-column>
-        <p-column field="name" header="Name"></p-column>
+        <p-column field="id" 
+            header="Id"
+            [style]="{'width':'5%'}"></p-column>
+        <p-column field="name" 
+            header="Name"
+            [style]="{'width':'70%'}"></p-column>
+
+        <p-column [style]="{'width':'25%'}">
+            <ng-template let-card="rowData" 
+             pTemplate type="body">
+                <button class="btn btn-xs btn-default" 
+                    type="button" 
+                    title="View"
+                    (click)="goToView(card)">
+                    <i class="fa fa-eye"></i>
+                    <span> View </span>
+                </button>
+                <button class="btn btn-xs btn-default" 
+                    type="button" 
+                    title="Edit"
+                    (click)="goToEdit(card)">
+                    <i class="fa fa-pencil"></i>
+                    <span> Edit </span>
+                </button>
+                <button class="btn btn-xs btn-default" 
+                    type="button" 
+                    title="Delete"
+                    (click)="delete(card)">
+                    <i class="fa fa-trash"></i>
+                    <span> Delete </span>
+            </button>
+            </ng-template>
+        </p-column>
+        
+        
     </p-dataTable>
 </div>

@@ -2,7 +2,8 @@ import { Component,
          OnInit, 
          AfterViewInit,
          OnDestroy  } from '@angular/core';         
-import { Router, ActivatedRoute } from '@angular/router';
+import { Router, 
+         ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 
 import { MessageService } from 'primeng/components/common/messageservice';
