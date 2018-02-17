@@ -33,7 +33,6 @@ import { CardFormComponent } from '../card_form.component';
     CardFormComponent    
   ],
   providers: [
-    
   ]
 })
 export class CardModule { };

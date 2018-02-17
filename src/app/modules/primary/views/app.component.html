@@ -6,43 +6,13 @@
 </div>
 <!--end header-->
 
-
-
-
-
-
-<div id="featured-section row">
+<div>
   <h2>{{ heading }}</h2>
-</div>
-<!--end featured-section-->
-
-
-<div class="row">
-    <router-outlet></router-outlet>
+  <div>
+      <router-outlet></router-outlet>
+  </div>    
 </div>
 
-
-<div id="frontpage-main">
-  <div id="overview" class="frontpage-section">
-    <h3>[ADD TITLE]</h3>
-    <p>[ADD OVERVIEW]</p>
-    <ul class="blue-bullets">
-      <li>[ADD CONTENT]</li>
-      <li>[ADD CONTENT]</li>
-      <li>[ADD CONTENT]</li>
-      <li>[ADD CONTENT]</li>
-    </ul>
-  </div>
-  <!--end frontpage-content-->
-  <div id="latest-article" class="frontpage-section">
-    <h3>Latest Article</h3>
-    <a class="article-title" href="#">[ADD ARTICLE TITLE]</a>
-    <p class="meta">Posted By: [ADD AUTHOR NAME]</p>
-    <p>[ADD ARTICLE OVERVIEW]</p>
-    <a class="read-more" href="#">Read More &raquo;</a>
-  </div>
-  <!--end frontpage-sidebar-->
-</div>
-<!--end frontpage-main-->
 
 <p-growl [(value)]="msgs"></p-growl>
+<p-confirmDialog header="Confirmation" icon="fa fa-question-circle" width="425"></p-confirmDialog>

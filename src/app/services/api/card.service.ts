@@ -147,11 +147,16 @@ export class CardService extends BaseService {
         let headers = new Headers({ 'Content-Type': 'application/json' });
         let options = new RequestOptions({ headers: headers, body: '' });
 
-        return this.http.delete(url, options)
-            .map((response: Response) => {
-                return !!response.json();
-            })
-            .do((data) => console.log(JSON.stringify(data)))
-            .catch(this.handleError);
+        return Observable.create(observer => {
+            self.http.delete(url, options)
+                .map((response: Response) => {                   
+                    if (response.status == 204) {
+                        observer.next(true);
+                    }
+                })
+                .do((data) => console.log(JSON.stringify(data)))
+                .subscribe();               
+        })
+        .catch(this.handleError);
     }
 }

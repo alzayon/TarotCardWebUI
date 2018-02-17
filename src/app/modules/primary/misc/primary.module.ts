@@ -5,7 +5,8 @@ import { HttpModule,
          RequestOptions } from '@angular/http';
 import { RouterModule } from '@angular/router'
 
-import { GrowlModule } from 'primeng/primeng';
+import { GrowlModule, ConfirmDialogModule, SharedModule } from 'primeng/primeng';
+import { ConfirmationService } from 'primeng/components/common/confirmationservice';
 import { MessageService } from 'primeng/components/common/messageservice';
 import * as lodash from 'lodash';
 
@@ -27,15 +28,19 @@ import { environment } from '../../../../environments/environment';
     BrowserAnimationsModule,
     HttpModule,
     GrowlModule,
+    ConfirmDialogModule,
+    SharedModule,
     RouterModule.forRoot(primaryRoutes)
+
   ],
   providers: [
     { provide: ENVIRONMENT_CONFIG, useValue: environment },
     { provide: __, useValue: lodash },
     { provide: RequestOptions, useClass: DefaultRequestOptionsService },
     CardService,
-    MessageService
+    MessageService,
+    ConfirmationService
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [ AppComponent ]
 })
 export class PrimaryModule { }

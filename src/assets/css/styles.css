@@ -167,14 +167,14 @@ em{
 /* ---------------------- */
 /* -- Featured Section -- */
 /* ---------------------- */
-#featured-section{
+.featured-section{
 	float:left;
 	margin:0;
 	overflow:hidden;
 	padding:20px 0 50px 0;
 	border-bottom:1px #ddd dotted;
 }
-#featured-section h2{
+.featured-section h2{
 	clear:both;
 	color:#888;
 	letter-spacing:-1px;
@@ -183,7 +183,7 @@ em{
 	margin:0;
 	text-align:center;
 }
-#featured-section h2 span{
+.featured-section h2 span{
 	color:#555;
 }
 #circles{
@@ -202,19 +202,19 @@ em{
 .circle h3{
 	margin-top:45px;
 }
-#featured-section .red-circle{
+.featured-section .red-circle{
 	background:url(/assets/images/rokono/circle-red.png) no-repeat;
 }
-#featured-section .pink-circle{
+.featured-section .pink-circle{
 	background:url(/assets/images/rokono/circle-pink.png) no-repeat;
 }
-#featured-section .orange-circle{
+.featured-section .orange-circle{
 	background:url(/assets/images/rokono/circle-orange.png) no-repeat;
 }
-#featured-section .yellow-circle{
+.featured-section .yellow-circle{
 	background:url(/assets/images/rokono/circle-yellow.png) no-repeat;
 }
-#featured-section .first{
+.featured-section .first{
 	margin-left:0;
 }
 /* ---------------- */
@@ -271,225 +271,7 @@ em{
 	position:relative;
 	padding:0 0 38px 35px;
 }
-/* ------------- */
-/* -- Content -- */
-/* ------------- */
-#main{
-	float:left;
-	margin:40px 0 50px 0;
-	width:100%;
-}
-#content{
-	float:left;
-	width:480px;
-	padding:0 165px 0 0;
-}
-/* --------------- */
-/* -- Portfolio -- */
-/* --------------- */
-#portfolio{
-	margin:60px 0 50px 0;
-}
-#portfolio h2{
-	letter-spacing:-1px;
-	margin:0 0 40px 0;
-	font-size:20px;
-	font-style:italic;
-	color:#888;
-}
-.portfolio-item{
-	float:left;
-	width:280px;
-	height:200px;
-	margin:0 0 60px 60px;
-}
-.portfolio-item:hover{
-	opacity:0.7;
-}
-.first{
-	margin-left:0;
-}
-.portfolio-item img{
-	border:1px #ddd solid;
-}
-/* ------------- */
-/* -- Project -- */
-/* ------------- */
-#project-content{
-	float:left;
-	width:480px;
-}
-#project-header{
-	margin:0 0 25px 0;
-}
-#project-content h3{
-	margin:0 0 10px 0;
-}
-#project-content h3 span{
-	color:#888;
-}
-#project-image-large img{
-	float:right;
-	border:1px #ddd solid;
-}
-#project-content .read-more{
-	display:block;
-	background:url(/assets/images/rokono/blue-button-bg.png) no-repeat;
-	width:141px;
-	height:34px;
-	color:#fff;
-	text-align:center;
-	padding:5px 0;
-	margin:25px 0 0 0;
-}
-#project-content .read-more:hover{
-	background:url(/assets/images/rokono/red-button-bg.png) no-repeat;
-}
-#project-header h3{
-	margin-bottom:2px;
-}
-/* ----------- */
-/* -- Posts -- */
-/* ----------- */
-.article-title{
-	margin:0 0 -4px 0;
-}
-.article-title a{
-	font-size:24px;
-	color:#555;
-	font-style:normal;
-}
-.article-title a:hover{
-	font-size:24px;
-	color:#2684cd;
-}
-.article-meta, .article-meta a{
-	margin:5px 0 20px 0;
-	font-size:18px;
-	color:#888;
-	font-style:normal;
-}
-.more-link{
-	display:block;
-	background:url(/assets/images/rokono/blue-button-bg.png) no-repeat;
-	width:141px;
-	height:34px;
-	color:#fff;
-	text-align:center;
-	padding:5px 0;
-	margin:25px 0 0 0;
-}
-.more-link:hover{
-	background:url(/assets/images/rokono/red-button-bg.png) no-repeat;
-	color:#fff;
-}
-/* ------------- */
-/* -- Sidebar -- */
-/* ------------- */
-#sidebar{
-	float:left;
-	width:315px;
-	margin:0;
-}
-#sidebar h3{
-	font-size:16px;
-}
-#sidebar .sidebar-title{
-	margin-top:0;
-}
-#sidebar .sidebar-button{
-	clear:both;
-	display:block;
-	background:url(/assets/images/rokono/orange-button-bg.png) no-repeat;
-	width:141px;
-	height:34px;
-	color:#fff;
-	text-align:center;
-	padding:5px 0;
-	margin:15px 0 0 -2px;
-}
-#sidebar .sidebar-button:hover{
-	background:url(/assets/images/rokono/black-button-bg.png) no-repeat;
-}
-#sidebar .portfolio-item{
-	clear:both;
-	margin:10px 0 10px 0;
-	width:100px;
-}
-#sidebar .portfolio-item img{
-	width:250px;
-}
-#sidebar .portfolio-item img:hover{
-	opacity:0.9;
-}
-/* ------------------ */
-/* -- Contact Form -- */
-/* ------------------ */
-#contact-details{
-	float:left;
-	width:300px;
-	padding:0 120px 0 0;
-}
-#contact-details .title{
-	margin-top:0;
-}
-#contact-details h4{
-	margin:0 0 5px 0;
-}
-#contact-details span{
-	color:#888;
-}
-#contact-form-container{
-	float:left;
-	width:450px;
-}
-#contact-form input{
-	background:url(/assets/images/rokono/textinput-bg.png) repeat-x;
-	border:1px #ddd solid;
-	padding:15px;
-	width:250px;
-	margin:0 0 15px 0;
-	font-size:12px;
-	color:#555;
-	font-family:arial, sans-serif;
-}
-#contact-form textarea{
-	background:url(/assets/images/rokono/textarea-bg.png) repeat-x;
-	border:1px #ddd solid;
-	padding:15px;
-	width:350px;
-	margin:0 0 15px 0;
-	font-size:12px;
-	color:#555;
-	line-height:18px;
-	height:150px;
-	font-family:arial, sans-serif;
-}
-#contact-form .submit{
-	display:block;
-	background:url(/assets/images/rokono/blue-button-bg.png) no-repeat;
-	width:141px;
-	height:34px;
-	color:#fff;
-	text-align:center;
-	padding:5px 0;
-	margin:25px 0 0 0;
-	border:none;
-	cursor:pointer;
-	font-size:14px;
-	margin:0;
-}
-#contact-form .submit:hover{
-	background:url(/assets/images/rokono/red-button-bg.png) no-repeat;
-	color:#fff;
-}
-#response{
-	background-color:#eee;
-	border:1px #ddd solid;
-	padding:10px;
-	color:#cc0000;
-	margin-bottom:17px;
-}
+
 /* ------------ */
 /* -- Footer -- */
 /* ------------ */
