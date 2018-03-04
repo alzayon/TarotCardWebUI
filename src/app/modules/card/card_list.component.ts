@@ -8,22 +8,27 @@ import {
     ActivatedRoute
 } from '@angular/router';
 
+import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
+
 import { ConfirmationService } from 'primeng/components/common/confirmationservice';
 import { MessageService } from 'primeng/components/common/messageservice';
 
 import { CardService } from '../../services/api/card.service';
 import { CardEventBus } from './misc/card_event_bus';
 import { Card } from '../../domain/model/card';
+import { RootState } from '../../redux/reducers/root_reducer';
+import * as cardActions from '../../redux/actions/card_actions';
 
 @Component({
     selector: 'card-list',
     templateUrl: './views/card_list.component.html'
 })
 export class CardListComponent {
+    
+    cards$: Observable<Card[]>;
 
-    cards: Array<Card> = [];
-
-    constructor(private cardService: CardService,
+    constructor(private store: Store<RootState>,
         private router: Router,
         private confirmationService: ConfirmationService,
         private messageService:MessageService) {
@@ -36,13 +41,13 @@ export class CardListComponent {
 
     private loadList() {
         let self = this;
-        this.cardService.list()
-            .subscribe(
-            (response) => {
-                self.cards = response.list;
-            },
-            (e) => { }
-            );
+        
+        self.loadCards();
+        self.cards$ = this.store.select(state => state.cardState.cards);
+    }
+
+    loadCards() {
+        this.store.dispatch(new cardActions.LoadCardsAction());
     }
 
     goToView(card: Card) {
@@ -54,32 +59,6 @@ export class CardListComponent {
     }
 
     delete(card: Card) {
-        var self = this;
-        this.confirmationService.confirm({
-            message: 'Are you sure that you want to delete this card?',
-            accept: () => {
-                self.cardService.delete(card.id)
-                    .subscribe((r) => {
-                        if (r) {
-                            self.messageService.add({ 
-                                severity: 'success', 
-                                summary: 'Success', 
-                                detail: 'Successfully deleted the item.'});
-                                self.loadList();
-                        } else {
-                            self.messageService.add({ 
-                                severity: 'error', 
-                                summary: 'Server Error', 
-                                detail: 'Error in deleting.'});
-                        }                        
-                    },
-                    (e) => {
-                        self.messageService.add({ 
-                            severity: 'error', 
-                            summary: 'Server Error', 
-                            detail: 'Error in deleting.'});
-                    })
-            }
-        });
+        
     }
 }

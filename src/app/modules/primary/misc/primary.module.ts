@@ -5,6 +5,8 @@ import { HttpModule,
          RequestOptions } from '@angular/http';
 import { RouterModule } from '@angular/router'
 
+import { StoreDevtoolsModule } from '@ngrx/store-devtools';
+
 import { GrowlModule, ConfirmDialogModule, SharedModule } from 'primeng/primeng';
 import { ConfirmationService } from 'primeng/components/common/confirmationservice';
 import { MessageService } from 'primeng/components/common/messageservice';
@@ -18,6 +20,8 @@ import { CardService } from '../../../services/api/card.service';
 import { ENVIRONMENT_CONFIG, __ } from './tokens';
 import { environment } from '../../../../environments/environment';
 
+import { AppStoreModule } from '../../../redux/store/app.store.module'
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -30,8 +34,9 @@ import { environment } from '../../../../environments/environment';
     GrowlModule,
     ConfirmDialogModule,
     SharedModule,
-    RouterModule.forRoot(primaryRoutes)
-
+    RouterModule.forRoot(primaryRoutes),
+    AppStoreModule,
+    StoreDevtoolsModule.instrument({maxAge: 25})
   ],
   providers: [
     { provide: ENVIRONMENT_CONFIG, useValue: environment },
