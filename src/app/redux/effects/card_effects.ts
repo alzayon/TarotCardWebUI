@@ -22,4 +22,24 @@ export class CardEffects {
                     return new cardActions.LoadCardsSuccessAction(cardsListResponse.list);
                 });
         });
+
+    // tslint:disable-next-line:member-ordering
+    @Effect() deleteCard$ = this.actions$
+        .ofType(cardActions.CARD_DELETE)
+        .switchMap((action: cardActions.DeleteCardAction) => {
+            let params = action.payload;
+            let cardId = params.value1;
+            let callback = params.value2;
+            return this.cardService.delete(cardId)
+                .do(outcome => {
+                    callback(outcome);
+                })
+                .map(outcome => { 
+                    if (outcome) {
+                        return new cardActions.DeleteCardActionSuccess(outcome); 
+                    } else {
+                        return new cardActions.DoNothing();
+                    }        
+                });
+        });    
 }

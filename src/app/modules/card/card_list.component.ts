@@ -19,6 +19,7 @@ import { CardEventBus } from './misc/card_event_bus';
 import { Card } from '../../domain/model/card';
 import { RootState } from '../../redux/reducers/root_reducer';
 import * as cardActions from '../../redux/actions/card_actions';
+import { Pair } from '../../common/pair';
 
 @Component({
     selector: 'card-list',
@@ -32,7 +33,6 @@ export class CardListComponent {
         private router: Router,
         private confirmationService: ConfirmationService,
         private messageService:MessageService) {
-
     }
 
     ngOnInit() {
@@ -59,6 +59,28 @@ export class CardListComponent {
     }
 
     delete(card: Card) {
+        let self = this;
+        this.confirmationService.confirm({
+            message: 'Are you sure that you want to delete this card?',
+            accept: () => {
+                let callback = (outcome) => {
+                    if (outcome) {
+                        self.messageService.add({ 
+                            severity: 'success', 
+                            summary: 'Success', 
+                            detail: 'Successfully deleted the item.'});
+                            self.loadList();
+                    } else {
+                        self.messageService.add({ 
+                            severity: 'error', 
+                            summary: 'Server Error', 
+                            detail: 'Error in deleting.'});
+                    }   
+                };
+                let pair = new Pair(card.id, callback);
+                this.store.dispatch(new cardActions.DeleteCardAction(pair));
+            }
+        });
         
     }
 }
