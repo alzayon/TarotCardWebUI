@@ -3,74 +3,80 @@ import { Component,
          AfterViewInit,
          OnDestroy  } from '@angular/core';         
 import { Router, ActivatedRoute } from '@angular/router';
+
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
+import { RootState } from '../../redux/reducers/root_reducer';
+import * as cardActions from '../../redux/actions/card_actions';
+import * as generalActions from '../../redux/actions/general_actions';
+
 import { CardService } from '../../services/api/card.service';
-import { CardEventBus } from './misc/card_event_bus';
 import { Card } from '../../domain/model/card';
 import { CardType } from '../../domain/enums/card_type';
-import { CardEventType } from './misc/card_event_type';
 import { CardBaseComponent } from './card_base.component';
-import { PrimaryEventBus } from '../primary/misc/primary_event_bus';
+import { Pair } from '../../common/pair';
+import { CardAddResponse } from '../../services/api/response/card/card_add.response';
+import { ICardFormState } from '../../redux/reducers/card_reducer';
+
 
 @Component({
     selector: 'card-add',
-    templateUrl: './views/card_add.component.html',
-    providers: [
-        CardEventBus
-    ]
+    templateUrl: './views/card_add.component.html'
 })
 export class CardAddComponent extends CardBaseComponent implements OnInit {
 
-    private subscriptions:Array<Subscription> = [];
+    private currentCard$: Observable<Card>;
+    private cardFormState$: Observable<ICardFormState>;
 
-    constructor(private cardService: CardService,
-        private cardEventBus:CardEventBus,
-        private primaryEventBus:PrimaryEventBus,
+    constructor(protected store: Store<RootState>,
+        private cardService: CardService,
         private messageService:MessageService,
         private router:Router) {
-            super(primaryEventBus);            
+            super(store);            
     }
     
-    ngOnInit(): void {
-        super.ngOnInit();                
-        let subscription = this.cardEventBus.eventObservable.subscribe(
-            (v) => {
-                let eventType = v.value1;
-                switch(eventType) {
-                    case CardEventType.BEGIN_SAVE:
-                        let formState = v.value2;                         
-                        this.saveEventHandler(formState);
-                        break;                        
-                }                            
-            }); 
-        this.subscriptions.push(subscription);                                   
+    ngOnInit(): void {  
+        let self = this;
+        self.store.dispatch(new generalActions.UpdatePageHeadingAction("Card Add"));
+        self.store.dispatch(new cardActions.UpdateCurrentCardAction(new Card(0, "", CardType.MAJOR_ARCANA)));
+
+        self.cardFormState$ = this.store.select(state => state.cardState.formState);
+
+        self.cardFormState$.subscribe(
+            (val) => {
+                if (val) {
+                    self.saveEventHandler(val);
+                }                
+            }
+        );
     }    
 
     ngOnDestroy(): void {
-        super.ngOnDestroy();
-        for(let s of this.subscriptions) {
-            s.unsubscribe();
-        }
     }
 
     private saveEventHandler(formState: any) {  
         let self = this;
-
+        
         //https://blog.oio.de/2014/02/28/typescript-accessing-enum-values-via-a-string/
-        let formValues = formState.formValues;
-        let cardType: string = formValues.cardType;
+        let cardType: string = formState.cardType;
         let card = new Card(0, 
-            formValues.cardName, 
+            formState.cardName, 
             CardType[cardType]);
         
         let dirty = formState.dirty;
         let valid = formState.valid;
         
         if (dirty && valid) {
-            this.save(card); 
+            self.save(card); 
+        } else if (!dirty) {
+            self.messageService.add({
+                severity: 'warning', 
+                summary: 'Warning', 
+                detail: 'No changes were made.'});
         } else {
             self.messageService.add({
                 severity: 'error', 
@@ -82,23 +88,23 @@ export class CardAddComponent extends CardBaseComponent implements OnInit {
 
     private save(card: Card) {
         let self = this;
-        this.cardService.add(card)
-                .subscribe(
-                    (r) => {                    
-                        self.messageService.add({ 
-                            severity: 'success', 
-                            summary: 'Success', 
-                            detail: 'Successfully saved!'});
-                            
-                        //TODO
-                        //Redirect to detail page    
-                        self.router.navigate(['/card/list']);     
-                    },
-                    (e) => {  
-                        self.messageService.add({
-                            severity: 'error', 
-                            summary: 'Server Error', 
-                            detail: 'There was a problem saving.'});
-                    });   
+
+        let responseHandler = (r: CardAddResponse) => {
+            if (r.outcome) {
+                self.messageService.add({ 
+                    severity: 'success', 
+                    summary: 'Success', 
+                    detail: 'Successfully saved!'});
+                self.router.navigate(['/card/list']);
+                self.store.dispatch(new cardActions.SetCardFormStateAction(null))
+            } else {
+                self.messageService.add({
+                    severity: 'error', 
+                    summary: 'Server Error', 
+                    detail: 'There was a problem saving.'});
+            }
+        }
+            
+        self.store.dispatch(new cardActions.AddCardAction(new Pair(card, responseHandler))); 
     }
 }

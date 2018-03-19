@@ -4,18 +4,22 @@ import { Component,
          OnDestroy  } from '@angular/core';
 import { Router, 
          ActivatedRoute } from '@angular/router';
+
 import { Subscription } from 'rxjs/Subscription';
+import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
 import { CardService } from '../../services/api/card.service';
-import { CardEventBus } from './misc/card_event_bus';
 import { Card } from '../../domain/model/card';
 import { CardType } from '../../domain/enums/card_type';
-import { CardEventType } from './misc/card_event_type';
 import { CardFetchResponse } from '../../services/api/response/card/card_fetch.response';
 import { CardBaseComponent } from './card_base.component';
-import { PrimaryEventBus } from '../primary/misc/primary_event_bus';
+import { RootState } from '../../redux/reducers/root_reducer';
+import * as cardActions from '../../redux/actions/card_actions';
+import { ICardFormState } from '../../redux/reducers/card_reducer';
+import { Pair } from '../../common/pair';
 
 @Component({
     selector: 'card-view',
@@ -24,34 +28,40 @@ import { PrimaryEventBus } from '../primary/misc/primary_event_bus';
 export class CardViewComponent extends CardBaseComponent {
     
     private subscriptions:Array<Subscription> = [];
-    private card:Card;
+    private card$: Observable<Card>;
+    private card:Card = null;
 
-    constructor(private cardService: CardService,
-        private primaryEventBus:PrimaryEventBus,
+    constructor(protected store: Store<RootState>,            
         private messageService:MessageService,
         private router:Router,
         private route: ActivatedRoute) {
-        super(primaryEventBus); 
+        super(store); 
     }
 
     ngOnInit(): void { 
-        super.ngOnInit();
+        let self = this;
+        self.card$ = this.store.select(state => state.cardState.currentCard);
 
         // Read the product Id from the route parameter
         let subcription = this.route.params.subscribe(
             params => {
                 let id = +params['id'];
-                this.cardService.fetch(id)
-                        .subscribe((response) => {
-                            this.fetchHandler(response);
-                        }, 
-                        (e) => {
-                            this.messageService.add({ 
-                                severity: 'error', 
-                                summary: 'Server Error', 
-                                detail: 'Error fetching.'});
-                            this.router.navigate(['/card/list']);
-                        });
+                
+                self.card$.subscribe(
+                    (val) => {
+                        self.card = val;
+                    }
+                );
+
+                let notFoundHandler = () => {
+                    self.messageService.add({ 
+                        severity: 'warning', 
+                        summary: 'Not Found', 
+                        detail: 'Item was not found!'});
+                        self.router.navigate(['/card/list']);
+                };  
+
+                self.store.dispatch(new cardActions.LoadCardAction(new Pair(id, notFoundHandler)));
             }
         );
     }

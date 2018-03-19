@@ -14,8 +14,6 @@ import { Store } from '@ngrx/store';
 import { ConfirmationService } from 'primeng/components/common/confirmationservice';
 import { MessageService } from 'primeng/components/common/messageservice';
 
-import { CardService } from '../../services/api/card.service';
-import { CardEventBus } from './misc/card_event_bus';
 import { Card } from '../../domain/model/card';
 import { RootState } from '../../redux/reducers/root_reducer';
 import * as cardActions from '../../redux/actions/card_actions';

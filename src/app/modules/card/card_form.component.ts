@@ -15,16 +15,19 @@ import { FormBuilder,
 import { ActivatedRoute, Router  } from '@angular/router';
 
 import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
+
 import 'rxjs/add/operator/debounceTime';
 import 'rxjs/add/observable/fromEvent';
 import 'rxjs/add/observable/merge';
 
 import { CardType } from '../../domain/enums/card_type';
 import { EnumHelper } from '../../domain/helpers/enum_helper';
-import { CardEventBus } from './misc/card_event_bus';
-import { CardEventType } from './misc/card_event_type';
 import { ValidationCollectorService } from '../../services/validators/validation_collector.service';
 import { Card } from '../../domain/model/card';
+import { RootState } from '../../redux/reducers/root_reducer';
+import * as cardActions from '../../redux/actions/card_actions';
+import { ICardFormState } from '../../redux/reducers/card_reducer';
 
 @Component({
     selector: 'card-form',
@@ -54,52 +57,52 @@ export class CardFormComponent implements OnInit {
         }
     };
 
-    constructor(private fb: FormBuilder,
+    private card$: Observable<Card>;
+
+    constructor(private store: Store<RootState>,
+        private fb: FormBuilder,
         private route: ActivatedRoute,
-        private cardEventBus:CardEventBus,
-        private validationCollector:ValidationCollectorService) {
+        private validationCollector:ValidationCollectorService) {            
         }
     
     save(): void {
         let self = this;
-        let formValues = self.mainFormGroup.value;
-        this.cardEventBus.publish(CardEventType.BEGIN_SAVE, 
-            { "formValues" : formValues,
-              "dirty": self.mainFormGroup.dirty,
-              "valid" : self.mainFormGroup.valid
-            });
+        
+        let formGroup = self.mainFormGroup;
+        let formValues = formGroup.value;
+        
+        let formState: ICardFormState = {
+            dirty: formGroup.dirty,
+            valid: formGroup.valid,
+            cardName: formValues.cardName,
+            cardType: formValues.cardType
+        };
+        self.store.dispatch(new cardActions.SetCardFormStateAction(formState));        
     }
 
     ngOnInit(): void {
-        this.cardTypesList = EnumHelper.toList(CardType)
+        let self = this;
+        self.cardTypesList = EnumHelper.toList(CardType)
                                 .map((obj) => {
                                     return { label : obj, value : obj };
                                 });
         
         // Define an instance of the validator for use with this form, 
         // passing in this form's set of validation messages.
-        this.validationCollector.setValidationMessages(this.validationMessages);                        
+        self.validationCollector.setValidationMessages(this.validationMessages);                        
 
-        this.mainFormGroup = this.fb.group({
+        self.mainFormGroup = self.fb.group({
             cardName: ['', [Validators.required,
                                Validators.minLength(3),
                                Validators.maxLength(50)]],
             cardType: [CardType.MAJOR_ARCANA, [Validators.required]]                   
         });
 
-        this.cardEventBus.eventObservable
-                .subscribe(
-                    (v) => {
-                        let eventType = v.value1;
-                        let model = v.value2;
-                        switch(eventType) {
-                            case CardEventType.POPULATE_FORM:
-                                this.mainFormGroup.reset();
-                                this.populateForm(model);
-                                break;                        
-                        } 
-                    }
-                );
+        self.card$ = this.store.select(state => state.cardState.currentCard);
+        self.card$.subscribe(card => {
+            self.mainFormGroup.reset();
+            self.populateForm(card);
+        });            
     }
 
     ngAfterViewInit(): void {

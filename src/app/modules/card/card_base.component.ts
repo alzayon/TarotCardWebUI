@@ -1,23 +1,20 @@
 import { Subscription } from 'rxjs/Subscription';
-import { PrimaryEventBus } from "../primary/misc/primary_event_bus";
-import { PrimaryEventType } from "../primary/misc/primary_event_type";
+import { Observable } from 'rxjs/Observable';
+import { Store } from '@ngrx/store';
+
+import { RootState } from '../../redux/reducers/root_reducer';
+import * as cardActions from '../../redux/actions/card_actions';
 
 export abstract class CardBaseComponent {
-    private bSubscriptions:Array<Subscription> = [];
-    constructor(private bPrimaryEventBus:PrimaryEventBus) {
+
+    constructor(protected store: Store<RootState>) {
 
     }
 
-    ngOnInit() {
-        let subscription =
-            this.bPrimaryEventBus.publish(PrimaryEventType.UPDATE_LAYOUT_VALUES, {
-                "heading": "Cards"
-            });
+    ngOnInit() {        
     }
 
     ngOnDestroy() {
-        for(let s of this.bSubscriptions) {
-            s.unsubscribe();
-        }
+        
     }
 }

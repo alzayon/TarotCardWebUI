@@ -104,7 +104,7 @@ export class CardService extends BaseService {
                     json.name,
                     json.type //https://stackoverflow.com/questions/42299257/cast-int-to-enum-strings-in-typescript
                 );
-                return new CardAddResponse(cardReturned);
+                return new CardAddResponse(cardReturned, true);
             })
             .do((data) => console.log(JSON.stringify(data)))
             .catch(this.handleError);
