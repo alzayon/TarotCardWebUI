@@ -25,9 +25,9 @@ import { CardType } from '../../domain/enums/card_type';
 import { EnumHelper } from '../../domain/helpers/enum_helper';
 import { ValidationCollectorService } from '../../services/validators/validation_collector.service';
 import { Card } from '../../domain/model/card';
-import { RootState } from '../../redux/reducers/root_reducer';
-import * as cardActions from '../../redux/actions/card_actions';
-import { ICardFormState } from '../../redux/reducers/card_reducer';
+import { RootState } from '../../redux/reducers/root.reducer';
+import * as cardActions from '../../redux/actions/card.actions';
+import { ICardFormState } from '../../redux/reducers/card.reducer';
 
 @Component({
     selector: 'card-form',

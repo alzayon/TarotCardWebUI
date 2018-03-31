@@ -1,7 +1,7 @@
 import { Card } from "../../domain/model/card";
 import { ActionReducer } from "@ngrx/store";
 
-import * as CardActions from "../actions/card_actions";
+import * as CardActions from "../actions/card.actions";
 import { CardType } from "../../domain/enums/card_type";
 
 export interface ICardState {

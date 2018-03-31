@@ -4,7 +4,7 @@ import { Actions, Effect, toPayload } from '@ngrx/effects';
 import 'rxjs/add/operator/switchMap';
 
 import { CardService } from '../../services/api/card.service';
-import * as cardActions from '../actions/card_actions';
+import * as cardActions from '../actions/card.actions';
 
 @Injectable()
 export class CardEffects {

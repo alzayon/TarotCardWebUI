@@ -15,17 +15,17 @@ import 'rxjs/add/operator/filter';
 import { BaseService } from './base.service';
 import { ENVIRONMENT_CONFIG, 
          __ } from '../../modules/primary/misc/tokens';         
-import { CardAddRequest } from './request/card/card_add.request';
-import { CardEditRequest } from './request/card/card_edit.request';
-import { CardAddResponse } from './response/card/card_add.response';
-import { CardEditResponse } from './response/card/card_edit.response';
-import { CardFetchResponse } from './response/card/card_fetch.response';
-import { CardListResponse } from './response/card/card_list.response';
-import { Card } from '../../domain/model/card';
+import { CategoryAddRequest } from './request/category/category_add.request';
+import { CategoryEditRequest } from './request/category/category_edit.request';
+import { CategoryAddResponse } from './response/category/category_add.response';
+import { CategoryEditResponse } from './response/category/category_edit.response';
+import { CategoryFetchResponse } from './response/category/category_fetch.response';
+import { CategoryListResponse } from './response/category/category_list.response';
+import { Category } from '../../domain/model/category';
 
 
 @Injectable()
-export class CardService extends BaseService {
+export class CategoryService extends BaseService {
 
     constructor(@Inject(ENVIRONMENT_CONFIG) protected environmentConfig,
                 @Inject(__) protected __,
@@ -33,9 +33,9 @@ export class CardService extends BaseService {
         super();        
     }
 
-    list(): Observable<CardListResponse> {
+    list(): Observable<CategoryListResponse> {
         let baseUrl = this.getBaseUrl();
-        let url = baseUrl + '/cardresource';
+        let url = baseUrl + '/categoryresource';
 
         let params: URLSearchParams = new URLSearchParams();
 
@@ -51,16 +51,16 @@ export class CardService extends BaseService {
             let json = response.json();
             let list = [];
             for (let value of json) {
-                let card = new Card(value.id, value.name, value.type);
-                list.push(card);
+                let category = new Category(value.id, value.name);
+                list.push(category);
             }            
-            return new CardListResponse(list);
+            return new CategoryListResponse(list);
         });
     }
 
-    fetch(id : number): Observable<CardFetchResponse> {
+    fetch(id : number): Observable<CategoryFetchResponse> {
         let baseUrl = this.getBaseUrl();
-        let url = baseUrl + '/cardresource/' + id;
+        let url = baseUrl + '/categoryresource/' + id;
 
         let params: URLSearchParams = new URLSearchParams();
 
@@ -74,23 +74,21 @@ export class CardService extends BaseService {
         })
         .map((response: Response) => {            
             let json = response.json();                
-            let cardReturned = new Card(
+            let categoryReturned = new Category(
                 json.id,
-                json.name,
-                json.type //https://stackoverflow.com/questions/42299257/cast-int-to-enum-strings-in-typescript
+                json.name
             );
-            return new CardFetchResponse(cardReturned);
+            return new CategoryFetchResponse(categoryReturned);
         });
     }
 
-    add(cardModel: Card): Observable<CardAddResponse> {
+    add(categoryModel: Category): Observable<CategoryAddResponse> {
         let baseUrl = this.getBaseUrl();
-        let url = baseUrl + '/cardresource';
+        let url = baseUrl + '/categoryresource';
 
         let self = this;
         
-        let request: CardAddRequest = new CardAddRequest(cardModel.name, 
-            cardModel.type);
+        let request: CategoryAddRequest = new CategoryAddRequest(categoryModel.name);
         
         let body = JSON.stringify(request);
         let headers = new Headers({ 'Content-Type': 'application/json' });
@@ -99,26 +97,24 @@ export class CardService extends BaseService {
         return this.http.post(url, body, options)
             .map((response: Response) => {
                 let json = response.json();                
-                let cardReturned = new Card(
+                let categoryReturned = new Category(
                     json.id,
-                    json.name,
-                    json.type //https://stackoverflow.com/questions/42299257/cast-int-to-enum-strings-in-typescript
+                    json.name
                 );
-                return new CardAddResponse(cardReturned, true);
+                return new CategoryAddResponse(categoryReturned, true);
             })
             .do((data) => console.log(JSON.stringify(data)))
             .catch(this.handleError);
     }
 
-    edit(cardModel: Card) : Observable<CardEditResponse> {
+    edit(categoryModel: Category) : Observable<CategoryEditResponse> {
         let baseUrl = this.getBaseUrl();
-        let url = baseUrl + '/cardresource/' + cardModel.id;
+        let url = baseUrl + '/categoryresource/' + categoryModel.id;
 
         let self = this;
 
-        let request: CardEditRequest = new CardEditRequest(cardModel.id,
-            cardModel.name, 
-            cardModel.type);
+        let request: CategoryEditRequest = new CategoryEditRequest(categoryModel.id,
+            categoryModel.name);
         
         let body = JSON.stringify(request);
         let headers = new Headers({ 'Content-Type': 'application/json' });
@@ -127,12 +123,11 @@ export class CardService extends BaseService {
         return this.http.put(url, body, options)
             .map((response: Response) => {
                 let json = response.json();                
-                let cardReturned = new Card(
+                let categoryReturned = new Category(
                     json.id,
-                    json.name,
-                    json.type //https://stackoverflow.com/questions/42299257/cast-int-to-enum-strings-in-typescript
+                    json.name
                 );
-                return new CardEditResponse(cardReturned);
+                return new CategoryEditResponse(categoryReturned);
             })
             .do((data) => console.log(JSON.stringify(data)))
             .catch(this.handleError);
@@ -140,7 +135,7 @@ export class CardService extends BaseService {
 
     delete(id : number) : Observable<boolean> {
         let baseUrl = this.getBaseUrl();
-        let url = baseUrl + '/cardresource/' + id;
+        let url = baseUrl + '/categoryresource/' + id;
 
         let self = this;
 

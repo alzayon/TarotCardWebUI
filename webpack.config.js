@@ -1,3 +1,5 @@
+//https://stackoverflow.com/questions/43795131/webpack-extract-text-plugin-is-not-outputting-the-css
+
 const fs = require('fs');
 const path = require('path');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
@@ -68,7 +70,6 @@ module.exports = {
       "./node_modules"
     ],
     "symlinks": true,
-
   },
 
   "resolveLoader": {
@@ -80,6 +81,7 @@ module.exports = {
 
 
   //===============================================================================
+
   "entry": {
     "main": [
       "./src\\main.ts"
@@ -100,6 +102,7 @@ module.exports = {
     "filename": "[name].bundle.js",
     "chunkFilename": "[id].chunk.js"
   },
+
   //===============================================================================
 
   "module": {
@@ -136,6 +139,7 @@ module.exports = {
         }
       },
 
+      //===============================================================================
 
       //Exclude rule for .css below...
       {
@@ -269,6 +273,8 @@ module.exports = {
           }
         ]
       },
+
+      //===============================================================================
 
       {
         "include": [

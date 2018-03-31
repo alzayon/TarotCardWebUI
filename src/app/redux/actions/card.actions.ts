@@ -2,7 +2,7 @@ import { Action } from '@ngrx/store';
 import { Card } from '../../domain/model/card';
 import { Pair } from '../../common/pair';
 import { CardEditResponse } from '../../services/api/response/card/card_edit.response';
-import { ICardFormState } from '../reducers/card_reducer';
+import { ICardFormState } from '../reducers/card.reducer';
 import { CardAddResponse } from '../../services/api/response/card/card_add.response';
 
 export const CARDS_LOAD:string = "CARDS_LOAD";

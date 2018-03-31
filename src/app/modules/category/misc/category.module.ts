@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { DataTableModule, SharedModule } from 'primeng/primeng';
 
 import { categoryRoutes } from './category.routes';
 
@@ -17,7 +18,9 @@ import { CategoryFormComponent } from '../category_form.component';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forChild(categoryRoutes)
+    RouterModule.forChild(categoryRoutes),
+    DataTableModule,
+    SharedModule
   ],
   declarations: [
     CategoryAddComponent,

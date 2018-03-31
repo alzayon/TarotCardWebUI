@@ -15,8 +15,9 @@ import { ConfirmationService } from 'primeng/components/common/confirmationservi
 import { MessageService } from 'primeng/components/common/messageservice';
 
 import { Card } from '../../domain/model/card';
-import { RootState } from '../../redux/reducers/root_reducer';
-import * as cardActions from '../../redux/actions/card_actions';
+import { RootState } from '../../redux/reducers/root.reducer';
+import * as cardActions from '../../redux/actions/card.actions';
+import * as generalActions from '../../redux/actions/general.actions';
 import { Pair } from '../../common/pair';
 
 @Component({
@@ -42,6 +43,7 @@ export class CardListComponent {
         
         self.loadCards();
         self.cards$ = this.store.select(state => state.cardState.cards);
+        self.store.dispatch(new generalActions.UpdatePageHeadingAction("Card List"));
     }
 
     loadCards() {

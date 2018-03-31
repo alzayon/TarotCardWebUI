@@ -10,17 +10,16 @@ import { Store } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
-import { CardService } from '../../services/api/card.service';
 import { Card } from '../../domain/model/card';
 import { CardType } from '../../domain/enums/card_type';
 import { CardFetchResponse } from '../../services/api/response/card/card_fetch.response';
 import { CardBaseComponent } from './card_base.component';
 
-import { RootState } from '../../redux/reducers/root_reducer';
-import * as cardActions from '../../redux/actions/card_actions';
-import * as generalActions from '../../redux/actions/general_actions';
+import { RootState } from '../../redux/reducers/root.reducer';
+import * as cardActions from '../../redux/actions/card.actions';
+import * as generalActions from '../../redux/actions/general.actions';
 import { Pair } from '../../common/pair';
-import { ICardState, ICardFormState } from '../../redux/reducers/card_reducer';
+import { ICardState, ICardFormState } from '../../redux/reducers/card.reducer';
 
 import { CardEditResponse } from '../../services/api/response/card/card_edit.response';
 
@@ -36,7 +35,6 @@ export class CardEditComponent extends CardBaseComponent {
     private card:Card = null;
 
     constructor(protected store: Store<RootState>,
-        private cardService: CardService,
         private messageService:MessageService,
         private router:Router,
         private route: ActivatedRoute) {

@@ -2,43 +2,40 @@ import { Component,
     OnInit, 
     AfterViewInit,
     OnDestroy  } from '@angular/core';   
+
+import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
-import { PrimaryEventBus } from './misc/primary_event_bus';
-import { PrimaryEventType } from './misc/primary_event_type';
+
+import { Store } from '@ngrx/store';
+import { RootState } from '../../redux/reducers/root.reducer';
+
+import * as generalActions from '../../redux/actions/general.actions';
+import { IGeneralState } from '../../redux/reducers/general.reducer';
 
 @Component({
   selector: 'app-root',
-  templateUrl: './views/app.component.html',
-  providers: [ PrimaryEventBus ]
+  templateUrl: './views/app.component.html'
 })
 export class AppComponent {
 
     private subscriptions:Array<Subscription> = [];
     private heading:String = "Heading";
 
-    constructor(private primaryEventBus: PrimaryEventBus) { }
+    private pageHeading$: Observable<string>;
+
+    constructor(protected store: Store<RootState>) { }
 
     ngOnInit() {
         let self = this;
-        let subscription = 
-            this.primaryEventBus.eventObservable
-                    .subscribe((v) => {
-                        let eventType = v.value1;
-                        switch(eventType) {
-                            case PrimaryEventType.UPDATE_LAYOUT_VALUES:
-                                let values = v.value2;                         
-                                if (values.heading) {
-                                    self.heading = values.heading;
-                                }                       
-                        }  
-            });
+        self.pageHeading$ = this.store.select(state => state.generalState.pageHeading);
 
-        this.subscriptions.push(subscription);    
+        self.pageHeading$.subscribe(
+            (headingText) => {
+                self.heading = headingText;
+            }
+        );
     }
 
     ngOnDestroy(): void {
-        for(let s of this.subscriptions) {
-            s.unsubscribe();
-        }
     }
 }

@@ -1,3 +1,29 @@
-<div>
-    <h2>Category Form</h2>
-</div>
+<form class="form-horizontal" novalidate (ngSubmit)="save()" [formGroup]="mainFormGroup">
+    <fieldset>
+        <div class="form-group" [ngClass]="{'has-error': errorMessagesFound.categoryName }">
+            <label class="col-md-2 control-label" for="categoryNameId">
+                Category Name
+            </label>
+            <div class="col-md-10">
+                <input class="form-control" id="categoryNameId" type="text" placeholder="Name (required)" 
+                 formControlName="categoryName" />
+                <span class="help-block" *ngIf="errorMessagesFound.categoryName">
+                    {{errorMessagesFound.categoryName}}
+                </span>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="col-md-4 col-md-offset-2">
+                <span>
+                    <button class="btn btn-primary"
+                     [disabled]='!mainFormGroup.valid' 
+                     type="submit" 
+                     style="width:80px;margin-right:10px">
+                        Save
+                    </button>
+                </span>
+            </div>
+        </div>
+    </fieldset>
+</form>

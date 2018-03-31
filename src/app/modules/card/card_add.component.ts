@@ -10,9 +10,9 @@ import { Store } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
-import { RootState } from '../../redux/reducers/root_reducer';
-import * as cardActions from '../../redux/actions/card_actions';
-import * as generalActions from '../../redux/actions/general_actions';
+import { RootState } from '../../redux/reducers/root.reducer';
+import * as cardActions from '../../redux/actions/card.actions';
+import * as generalActions from '../../redux/actions/general.actions';
 
 import { CardService } from '../../services/api/card.service';
 import { Card } from '../../domain/model/card';
@@ -20,7 +20,7 @@ import { CardType } from '../../domain/enums/card_type';
 import { CardBaseComponent } from './card_base.component';
 import { Pair } from '../../common/pair';
 import { CardAddResponse } from '../../services/api/response/card/card_add.response';
-import { ICardFormState } from '../../redux/reducers/card_reducer';
+import { ICardFormState } from '../../redux/reducers/card.reducer';
 
 
 @Component({

@@ -1,3 +1,39 @@
 <div>
-    <h2>Category List</h2>
+    <p-dataTable [value]="categorys$ | async">
+        <p-column field="id" 
+            header="Id"
+            [style]="{'width':'5%'}"></p-column>
+        <p-column field="name" 
+            header="Name"
+            [style]="{'width':'70%'}"></p-column>
+
+        <p-column [style]="{'width':'25%'}">
+            <ng-template let-category="rowData" 
+             pTemplate type="body">
+                <button class="btn btn-xs btn-default" 
+                    type="button" 
+                    title="View"
+                    (click)="goToView(category)">
+                    <i class="fa fa-eye"></i>
+                    <span> View </span>
+                </button>
+                <button class="btn btn-xs btn-default" 
+                    type="button" 
+                    title="Edit"
+                    (click)="goToEdit(category)">
+                    <i class="fa fa-pencil"></i>
+                    <span> Edit </span>
+                </button>
+                <button class="btn btn-xs btn-default" 
+                    type="button" 
+                    title="Delete"
+                    (click)="delete(category)">
+                    <i class="fa fa-trash"></i>
+                    <span> Delete </span>
+            </button>
+            </ng-template>
+        </p-column>
+        
+        
+    </p-dataTable>
 </div>

@@ -17,15 +17,19 @@ import { AppComponent } from '../app.component';
 import { NavigationComponent } from '../navigation.component';
 import { DefaultRequestOptionsService } from '../../../services/api/general/default_request_options.service';
 import { CardService } from '../../../services/api/card.service';
+import { CategoryService } from '../../../services/api/category.service';
 import { ENVIRONMENT_CONFIG, __ } from './tokens';
 import { environment } from '../../../../environments/environment';
 
 import { AppStoreModule } from '../../../redux/store/app.store.module'
+import { FooterComponent } from '../footer.component';
+import { TarotReduxModule } from '../../../redux/tarot_redux.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    NavigationComponent
+    NavigationComponent,
+    FooterComponent
   ],
   imports: [
     BrowserModule,
@@ -36,7 +40,8 @@ import { AppStoreModule } from '../../../redux/store/app.store.module'
     SharedModule,
     RouterModule.forRoot(primaryRoutes),
     AppStoreModule,
-    StoreDevtoolsModule.instrument({maxAge: 25})
+    StoreDevtoolsModule.instrument({maxAge: 25}),
+    TarotReduxModule
   ],
   providers: [
     { provide: ENVIRONMENT_CONFIG, useValue: environment },

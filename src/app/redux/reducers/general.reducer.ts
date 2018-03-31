@@ -1,4 +1,4 @@
-import * as GeneralActions from "../actions/general_actions";
+import * as GeneralActions from "../actions/general.actions";
 import { ActionReducer } from "@ngrx/store";
 
 export interface IGeneralState {
