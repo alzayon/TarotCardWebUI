@@ -22,6 +22,7 @@ import { Pair } from '../../common/pair';
 import { ICardState, ICardFormState } from '../../redux/reducers/card.reducer';
 
 import { CardEditResponse } from '../../services/api/response/card/card_edit.response';
+import { SubscriptionCollectorService } from '../../services/general/subscription_collector.service';
 
 @Component({
     selector: 'card-edit',
@@ -29,7 +30,6 @@ import { CardEditResponse } from '../../services/api/response/card/card_edit.res
 })
 export class CardEditComponent extends CardBaseComponent {
     
-    private subscriptions:Array<Subscription> = [];
     private currentCard$: Observable<Card>;
     private cardFormState$: Observable<ICardFormState>;
     private card:Card = null;
@@ -37,7 +37,8 @@ export class CardEditComponent extends CardBaseComponent {
     constructor(protected store: Store<RootState>,
         private messageService:MessageService,
         private router:Router,
-        private route: ActivatedRoute) {
+        private route: ActivatedRoute,
+        private subscriptionCollectorService: SubscriptionCollectorService) {
             super(store);
     }
 
@@ -47,7 +48,7 @@ export class CardEditComponent extends CardBaseComponent {
         self.store.dispatch(new generalActions.UpdatePageHeadingAction("Edit Card"));
 
         // Read the product Id from the route parameter
-        let subcription = this.route.params.subscribe(
+        let s1 = this.route.params.subscribe(
             params => {
                 let id = +params['id'];
                 self.currentCard$ = this.store.select(state => state.cardState.currentCard);
@@ -76,16 +77,14 @@ export class CardEditComponent extends CardBaseComponent {
 
                 self.store.dispatch(new cardActions.LoadCardAction(new Pair(id, notFoundHandler)));
             }
-        );
-                    
-        this.subscriptions.push(subcription);            
+        );  
+        self.subscriptionCollectorService.addSubscription('CardEdit', s1);       
     }
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
-        for(let s of this.subscriptions) {
-            s.unsubscribe();
-        }
+        let self = this;
+        self.subscriptionCollectorService.unsubscribe('CardEdit');
     }
     
     private saveEventHandler(formState: ICardFormState) {  

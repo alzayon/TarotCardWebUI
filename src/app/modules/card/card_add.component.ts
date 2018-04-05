@@ -21,6 +21,7 @@ import { CardBaseComponent } from './card_base.component';
 import { Pair } from '../../common/pair';
 import { CardAddResponse } from '../../services/api/response/card/card_add.response';
 import { ICardFormState } from '../../redux/reducers/card.reducer';
+import { SubscriptionCollectorService } from '../../services/general/subscription_collector.service';
 
 
 @Component({
@@ -35,7 +36,8 @@ export class CardAddComponent extends CardBaseComponent implements OnInit {
     constructor(protected store: Store<RootState>,
         private cardService: CardService,
         private messageService:MessageService,
-        private router:Router) {
+        private router:Router,
+        private subscriptionCollectorService: SubscriptionCollectorService) {
             super(store);            
     }
     
@@ -46,16 +48,21 @@ export class CardAddComponent extends CardBaseComponent implements OnInit {
 
         self.cardFormState$ = this.store.select(state => state.cardState.formState);
 
-        self.cardFormState$.subscribe(
+        let s1 = self.cardFormState$.subscribe(
             (val) => {
                 if (val) {
                     self.saveEventHandler(val);
                 }                
             }
         );
+
+        self.subscriptionCollectorService.addSubscription('CardAdd', s1);
     }    
 
     ngOnDestroy(): void {
+        super.ngOnDestroy();
+        let self = this;
+        self.subscriptionCollectorService.unsubscribe('CardAdd');
     }
 
     private saveEventHandler(formState: any) {  

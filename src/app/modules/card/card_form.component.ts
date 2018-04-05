@@ -28,6 +28,7 @@ import { Card } from '../../domain/model/card';
 import { RootState } from '../../redux/reducers/root.reducer';
 import * as cardActions from '../../redux/actions/card.actions';
 import { ICardFormState } from '../../redux/reducers/card.reducer';
+import { SubscriptionCollectorService } from '../../services/general/subscription_collector.service';
 
 @Component({
     selector: 'card-form',
@@ -62,7 +63,8 @@ export class CardFormComponent implements OnInit {
     constructor(private store: Store<RootState>,
         private fb: FormBuilder,
         private route: ActivatedRoute,
-        private validationCollector:ValidationCollectorService) {            
+        private validationCollector:ValidationCollectorService,
+        private subscriptionCollectorService: SubscriptionCollectorService) {            
         }
     
     save(): void {
@@ -99,10 +101,12 @@ export class CardFormComponent implements OnInit {
         });
 
         self.card$ = this.store.select(state => state.cardState.currentCard);
-        self.card$.subscribe(card => {
+        let s1 = self.card$.subscribe(card => {
             self.mainFormGroup.reset();
             self.populateForm(card);
         });            
+
+        self.subscriptionCollectorService.addSubscription('CardForm', s1);
     }
 
     ngAfterViewInit(): void {
@@ -112,11 +116,13 @@ export class CardFormComponent implements OnInit {
                 Observable.fromEvent(formControl.nativeElement, 'blur'));
 
         // Merge the blur event observable with the valueChanges observable
-        Observable.merge(this.mainFormGroup.valueChanges, ...controlBlurs)
+        let s2 = Observable.merge(this.mainFormGroup.valueChanges, ...controlBlurs)
                   .debounceTime(400).subscribe(value => {
                         this.errorMessagesFound = 
                             this.validationCollector.processMessages(this.mainFormGroup);
         });
+
+        this.subscriptionCollectorService.addSubscription('CardForm', s2);
     }
 
     private populateForm(card:Card) {
@@ -127,5 +133,8 @@ export class CardFormComponent implements OnInit {
         });
     }
 
-   
+    ngOnDestroy(): void {
+        let self = this;
+        self.subscriptionCollectorService.unsubscribe('CardForm');
+    }
 }

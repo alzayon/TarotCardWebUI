@@ -1,3 +1,39 @@
 <div>
-    <h2>Spread List</h2>
+    <p-dataTable [value]="spreads$ | async">
+        <p-column field="id" 
+            header="Id"
+            [style]="{'width':'5%'}"></p-column>
+        <p-column field="name" 
+            header="Name"
+            [style]="{'width':'70%'}"></p-column>
+
+        <p-column [style]="{'width':'25%'}">
+            <ng-template let-spread="rowData" 
+             pTemplate type="body">
+                <button class="btn btn-xs btn-default" 
+                    type="button" 
+                    title="View"
+                    (click)="goToView(spread)">
+                    <i class="fa fa-eye"></i>
+                    <span> View </span>
+                </button>
+                <button class="btn btn-xs btn-default" 
+                    type="button" 
+                    title="Edit"
+                    (click)="goToEdit(spread)">
+                    <i class="fa fa-pencil"></i>
+                    <span> Edit </span>
+                </button>
+                <button class="btn btn-xs btn-default" 
+                    type="button" 
+                    title="Delete"
+                    (click)="delete(spread)">
+                    <i class="fa fa-trash"></i>
+                    <span> Delete </span>
+            </button>
+            </ng-template>
+        </p-column>
+        
+        
+    </p-dataTable>
 </div>

@@ -24,6 +24,7 @@ import { environment } from '../../../../environments/environment';
 import { AppStoreModule } from '../../../redux/store/app.store.module'
 import { FooterComponent } from '../footer.component';
 import { TarotReduxModule } from '../../../redux/tarot_redux.module';
+import { SubscriptionCollectorService } from '../../../services/general/subscription_collector.service';
 
 @NgModule({
   declarations: [
@@ -49,7 +50,8 @@ import { TarotReduxModule } from '../../../redux/tarot_redux.module';
     { provide: RequestOptions, useClass: DefaultRequestOptionsService },
     CardService,
     MessageService,
-    ConfirmationService
+    ConfirmationService,
+    SubscriptionCollectorService
   ],
   bootstrap: [ AppComponent ]
 })

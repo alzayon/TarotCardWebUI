@@ -20,6 +20,7 @@ import * as cardActions from '../../redux/actions/card.actions';
 import * as generalActions from '../../redux/actions/general.actions';
 import { ICardFormState } from '../../redux/reducers/card.reducer';
 import { Pair } from '../../common/pair';
+import { SubscriptionCollectorService } from '../../services/general/subscription_collector.service';
 
 @Component({
     selector: 'card-view',
@@ -27,14 +28,14 @@ import { Pair } from '../../common/pair';
 })
 export class CardViewComponent extends CardBaseComponent {
     
-    private subscriptions:Array<Subscription> = [];
     private card$: Observable<Card>;
     private card:Card = null;
 
     constructor(protected store: Store<RootState>,            
         private messageService:MessageService,
         private router:Router,
-        private route: ActivatedRoute) {
+        private route: ActivatedRoute,
+        private subscriptionCollectorService: SubscriptionCollectorService) {
         super(store); 
     }
 
@@ -44,7 +45,7 @@ export class CardViewComponent extends CardBaseComponent {
         self.store.dispatch(new generalActions.UpdatePageHeadingAction("Card View"));
 
         // Read the product Id from the route parameter
-        let subcription = this.route.params.subscribe(
+        let s1 = this.route.params.subscribe(
             params => {
                 let id = +params['id'];
                 
@@ -65,13 +66,14 @@ export class CardViewComponent extends CardBaseComponent {
                 self.store.dispatch(new cardActions.LoadCardAction(new Pair(id, notFoundHandler)));
             }
         );
+
+        self.subscriptionCollectorService.addSubscription('CardView', s1);
     }
 
     ngOnDestroy(): void {
+        let self = this;
         super.ngOnDestroy();
-        for(let s of this.subscriptions) {
-            s.unsubscribe();
-        }
+        self.subscriptionCollectorService.unsubscribe('CardView');
     }
 
     private fetchHandler(response:CardFetchResponse) {

@@ -1,9 +1,13 @@
-import { Component,
-    OnInit, 
+import {
+    Component,
+    OnInit,
     AfterViewInit,
-    OnDestroy  } from '@angular/core';
-import { Router, 
-    ActivatedRoute } from '@angular/router';
+    OnDestroy
+} from '@angular/core';
+import {
+    Router,
+    ActivatedRoute
+} from '@angular/router';
 
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
@@ -19,75 +23,79 @@ import * as categoryActions from '../../redux/actions/category.actions';
 import * as generalActions from '../../redux/actions/general.actions';
 import { ICategoryFormState } from '../../redux/reducers/category.reducer';
 import { Pair } from '../../common/pair';
+import { SubscriptionCollectorService } from '../../services/general/subscription_collector.service';
 
 @Component({
-selector: 'category-view',
-templateUrl: './views/category_view.component.html' 
+    selector: 'category-view',
+    templateUrl: './views/category_view.component.html'
 })
 export class CategoryViewComponent extends CategoryBaseComponent {
 
-private subscriptions:Array<Subscription> = [];
-private category$: Observable<Category>;
-private category:Category = null;
+    private category$: Observable<Category>;
+    private category: Category = null;
 
-constructor(protected store: Store<RootState>,            
-   private messageService:MessageService,
-   private router:Router,
-   private route: ActivatedRoute) {
-   super(store); 
-}
+    constructor(protected store: Store<RootState>,
+        private messageService: MessageService,
+        private router: Router,
+        private route: ActivatedRoute,
+        private subscriptionCollectorService: SubscriptionCollectorService) {
+        super(store);
+    }
 
-ngOnInit(): void { 
-   let self = this;
-   self.category$ = this.store.select(state => state.categoryState.currentCategory);
-   self.store.dispatch(new generalActions.UpdatePageHeadingAction("Category View"));
+    ngOnInit(): void {
+        let self = this;
+        self.category$ = this.store.select(state => state.categoryState.currentCategory);
+        self.store.dispatch(new generalActions.UpdatePageHeadingAction("Category View"));
 
-   // Read the product Id from the route parameter
-   let subcription = this.route.params.subscribe(
-       params => {
-           let id = +params['id'];
-           
-           self.category$.subscribe(
-               (val) => {
-                   self.category = val;
-               }
-           );
+        // Read the product Id from the route parameter
+        let s1 = this.route.params.subscribe(
+            params => {
+                let id = +params['id'];
 
-           let notFoundHandler = () => {
-               self.messageService.add({ 
-                   severity: 'warning', 
-                   summary: 'Not Found', 
-                   detail: 'Item was not found!'});
-                   self.router.navigate(['/category/list']);
-           };  
+                self.category$.subscribe(
+                    (val) => {
+                        self.category = val;
+                    }
+                );
 
-           self.store.dispatch(new categoryActions.LoadCategoryAction(new Pair(id, notFoundHandler)));
-       }
-   );
-}
+                let notFoundHandler = () => {
+                    self.messageService.add({
+                        severity: 'warning',
+                        summary: 'Not Found',
+                        detail: 'Item was not found!'
+                    });
+                    self.router.navigate(['/category/list']);
+                };
 
-ngOnDestroy(): void {
-   super.ngOnDestroy();
-   for(let s of this.subscriptions) {
-       s.unsubscribe();
-   }
-}
+                self.store.dispatch(new categoryActions.LoadCategoryAction(new Pair(id, notFoundHandler)));
+            }
+        );
 
-private fetchHandler(response:CategoryFetchResponse) {
-   let category = response.category;
-   if (category) {
-       this.onModelRetreived(category);
-   } else {
-       this.messageService.add({ 
-           severity: 'warning', 
-           summary: 'Not Found', 
-           detail: 'Item was not found!'});
-       this.router.navigate(['/category/list']);
-   }
-}
+        self.subscriptionCollectorService.addSubscription('CategoryView', s1);
+    }
 
-private onModelRetreived(category:Category) {
-   this.category = category;        
-}
+    ngOnDestroy(): void {
+        let self = this;
+        super.ngOnDestroy();
+        self.subscriptionCollectorService.unsubscribe('CategoryView');
+    }
+
+    private fetchHandler(response: CategoryFetchResponse) {
+        let category = response.category;
+        if (category) {
+            this.onModelRetreived(category);
+        } else {
+            this.messageService.add({
+                severity: 'warning',
+                summary: 'Not Found',
+                detail: 'Item was not found!'
+            });
+            this.router.navigate(['/category/list']);
+        }
+    }
+
+    private onModelRetreived(category: Category) {
+        this.category = category;
+    }
 
 }
