@@ -27,13 +27,11 @@ export class SpreadEffects {
     @Effect() loadSpread$ = this.actions$
         .ofType(spreadActions.SPREAD_LOAD)
         .switchMap((action: spreadActions.LoadSpreadAction) => {
-            let payload = action.payload;
-            let spreadId = payload.value1;
-            let notFoundHandler = payload.value2;
+            let spreadId = action.payload;
             return this.spreadService.fetch(spreadId)
                 .map(response => {     
                     if (!response.spread) {
-                        notFoundHandler();
+                        return new spreadActions.LoadSpreadDoneNotFoundAction();
                     } else {
                         return new spreadActions.LoadSpreadDoneAction(response.spread);
                     }                                    
@@ -44,12 +42,9 @@ export class SpreadEffects {
     @Effect() addSpread$ = this.actions$
         .ofType(spreadActions.SPREAD_ADD)
         .switchMap((action: spreadActions.AddSpreadAction) => {
-            let params = action.payload;
-            let spread = params.value1;
-            let callback = params.value2;
+            let spread = action.payload;
             return this.spreadService.add(spread)
                 .map(response => { 
-                    callback(response);
                     return new spreadActions.AddSpreadDoneAction(response);      
                 });
         });    
@@ -58,12 +53,9 @@ export class SpreadEffects {
     @Effect() editSpread$ = this.actions$
         .ofType(spreadActions.SPREAD_EDIT)
         .switchMap((action: spreadActions.EditSpreadAction) => {
-            let params = action.payload;
-            let spread = params.value1;
-            let callback = params.value2;
+            let spread = action.payload;
             return this.spreadService.edit(spread)
                 .map(response => { 
-                    callback(response);
                     return new spreadActions.EditSpreadDoneAction(response);      
                 });
         });    
@@ -72,12 +64,9 @@ export class SpreadEffects {
     @Effect() deleteSpread$ = this.actions$
         .ofType(spreadActions.SPREAD_DELETE)
         .switchMap((action: spreadActions.DeleteSpreadAction) => {
-            let params = action.payload;
-            let spreadId = params.value1;
-            let callback = params.value2;
+            let spreadId = action.payload;
             return this.spreadService.delete(spreadId)                
                 .map(outcome => { 
-                    callback(outcome);
                     return new spreadActions.DeleteSpreadDoneAction(outcome);       
                 });
         });    

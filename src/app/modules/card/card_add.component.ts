@@ -7,6 +7,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import { ActionsSubject } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
@@ -30,6 +31,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class CardAddComponent extends CardBaseComponent implements OnInit {
 
+    readonly SUBSCRIPTION_KEY_CARD_ADD = 'CardAdd';
+
     private currentCard$: Observable<Card>;
     private cardFormState$: Observable<ICardFormState>;
 
@@ -37,6 +40,7 @@ export class CardAddComponent extends CardBaseComponent implements OnInit {
         private cardService: CardService,
         private messageService:MessageService,
         private router:Router,
+        private actionSubject: ActionsSubject,
         private subscriptionCollectorService: SubscriptionCollectorService) {
             super(store);            
     }
@@ -55,14 +59,15 @@ export class CardAddComponent extends CardBaseComponent implements OnInit {
                 }                
             }
         );
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CARD_ADD, s1);
 
-        self.subscriptionCollectorService.addSubscription('CardAdd', s1);
+        self.setupSaveDoneHandler();
     }    
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         let self = this;
-        self.subscriptionCollectorService.unsubscribe('CardAdd');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_CARD_ADD);
     }
 
     private saveEventHandler(formState: any) {  
@@ -110,8 +115,31 @@ export class CardAddComponent extends CardBaseComponent implements OnInit {
                     summary: 'Server Error', 
                     detail: 'There was a problem saving.'});
             }
-        }
-            
-        self.store.dispatch(new cardActions.AddCardAction(new Pair(card, responseHandler))); 
+        }            
+        self.store.dispatch(new cardActions.AddCardAction(card)); 
+    }
+
+    private setupSaveDoneHandler() {
+        let self = this;
+        let s3 = self.actionSubject.subscribe(a => {
+            if (a.type == cardActions.CARD_ADD_DONE) {
+                let action = <cardActions.AddCardDoneAction> a;
+                let outcome = action.payload.outcome;
+                if (outcome) {
+                    self.messageService.add({ 
+                        severity: 'success', 
+                        summary: 'Success', 
+                        detail: 'Successfully saved!'});
+                    self.router.navigate(['/card/list']);
+                    self.store.dispatch(new cardActions.SetCardFormStateAction(null))
+                } else {
+                    self.messageService.add({
+                        severity: 'error', 
+                        summary: 'Server Error', 
+                        detail: 'There was a problem saving.'});
+                }               
+            }
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CARD_ADD, s3); 
     }
 }

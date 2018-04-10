@@ -7,6 +7,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import { ActionsSubject } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
@@ -18,7 +19,6 @@ import { CardBaseComponent } from './card_base.component';
 import { RootState } from '../../redux/reducers/root.reducer';
 import * as cardActions from '../../redux/actions/card.actions';
 import * as generalActions from '../../redux/actions/general.actions';
-import { Pair } from '../../common/pair';
 import { ICardState, ICardFormState } from '../../redux/reducers/card.reducer';
 
 import { CardEditResponse } from '../../services/api/response/card/card_edit.response';
@@ -30,6 +30,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class CardEditComponent extends CardBaseComponent {
     
+    readonly SUBSCRIPTION_KEY_CARD_EDIT = 'CardEdit';
+
     private currentCard$: Observable<Card>;
     private cardFormState$: Observable<ICardFormState>;
     private card:Card = null;
@@ -38,6 +40,7 @@ export class CardEditComponent extends CardBaseComponent {
         private messageService:MessageService,
         private router:Router,
         private route: ActivatedRoute,
+        private actionSubject: ActionsSubject,
         private subscriptionCollectorService: SubscriptionCollectorService) {
             super(store);
     }
@@ -65,26 +68,21 @@ export class CardEditComponent extends CardBaseComponent {
                             self.saveEventHandler(val);
                         }
                     }
-                );
+                );  
 
-                let notFoundHandler = () => {
-                    self.messageService.add({ 
-                        severity: 'warning', 
-                        summary: 'Not Found', 
-                        detail: 'Item was not found!'});
-                        self.router.navigate(['/card/list']);
-                };  
-
-                self.store.dispatch(new cardActions.LoadCardAction(new Pair(id, notFoundHandler)));
+                self.store.dispatch(new cardActions.LoadCardAction(id));
             }
         );  
-        self.subscriptionCollectorService.addSubscription('CardEdit', s1);       
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CARD_EDIT, s1);  
+                 
+        self.setupNotFoundHandler();
+        self.setupSaveDoneHandler();
     }
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         let self = this;
-        self.subscriptionCollectorService.unsubscribe('CardEdit');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_CARD_EDIT);
     }
     
     private saveEventHandler(formState: ICardFormState) {  
@@ -115,24 +113,45 @@ export class CardEditComponent extends CardBaseComponent {
     }
 
     private save(card: Card) {
-        let self = this;
+        let self = this;      
+        self.store.dispatch(new cardActions.EditCardAction(card));                
+    }
 
-        let responseHandler = (r: CardEditResponse) => {
-            if (r.outcome) {
+    private setupNotFoundHandler() {
+        let self = this;
+        let s2 = self.actionSubject.subscribe(a => {
+            if (a.type == cardActions.CARD_LOAD_DONE_NOT_FOUND) {
                 self.messageService.add({ 
-                    severity: 'success', 
-                    summary: 'Success', 
-                    detail: 'Successfully saved!'});
-                self.router.navigate(['/card/list']);
-                self.store.dispatch(new cardActions.SetCardFormStateAction(null))
-            } else {
-                self.messageService.add({
-                    severity: 'error', 
-                    summary: 'Server Error', 
-                    detail: 'There was a problem saving.'});
+                    severity: 'warning', 
+                    summary: 'Not Found', 
+                    detail: 'Item was not found!'});
+                    self.router.navigate(['/card/list']);
+            }            
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CARD_EDIT, s2); 
+    }
+
+    private setupSaveDoneHandler() {
+        let self = this;
+        let s3 = self.actionSubject.subscribe(a => {
+            if (a.type == cardActions.CARD_EDIT_DONE) {
+                let action = <cardActions.EditCardDoneAction> a;
+                let outcome = action.payload.outcome;
+                if (outcome) {
+                    self.messageService.add({ 
+                        severity: 'success', 
+                        summary: 'Success', 
+                        detail: 'Successfully saved!'});
+                    self.router.navigate(['/card/list']);
+                    self.store.dispatch(new cardActions.SetCardFormStateAction(null))
+                } else {
+                    self.messageService.add({
+                        severity: 'error', 
+                        summary: 'Server Error', 
+                        detail: 'There was a problem saving.'});
+                }                
             }
-        }
-        
-        self.store.dispatch(new cardActions.EditCardAction(new Pair(card, responseHandler)));                
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CARD_EDIT, s3);  
     }
 }

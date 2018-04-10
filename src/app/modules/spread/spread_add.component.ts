@@ -9,6 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import { ActionsSubject } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
@@ -30,6 +31,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class SpreadAddComponent extends SpreadBaseComponent implements OnInit {
 
+    readonly SUBSCRIPTION_KEY_SPREAD_ADD = 'SpreadAdd';
+
     private currentSpread$: Observable<Spread>;
     private spreadFormState$: Observable<ISpreadFormState>;
 
@@ -37,6 +40,7 @@ export class SpreadAddComponent extends SpreadBaseComponent implements OnInit {
         private spreadService: SpreadService,
         private messageService: MessageService,
         private router: Router,
+        private actionSubject: ActionsSubject,
         private subscriptionCollectorService: SubscriptionCollectorService) {
         super(store);
     }
@@ -55,14 +59,15 @@ export class SpreadAddComponent extends SpreadBaseComponent implements OnInit {
                 }
             }
         );
-
-        self.subscriptionCollectorService.addSubscription('SpreadAdd', s1);
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_ADD, s1);
+        
+        self.setupSaveDoneHandler();
     }
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         let self = this;
-        self.subscriptionCollectorService.unsubscribe('SpreadAdd');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_SPREAD_ADD);
     }
 
     private saveEventHandler(formState: any) {
@@ -89,30 +94,36 @@ export class SpreadAddComponent extends SpreadBaseComponent implements OnInit {
                 detail: 'Please enter valid values.'
             });
         }
-
     }
 
     private save(spread: Spread) {
         let self = this;
+        self.store.dispatch(new spreadActions.AddSpreadAction(spread));
+    }
 
-        let responseHandler = (r: SpreadAddResponse) => {
-            if (r.outcome) {
-                self.messageService.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: 'Successfully saved!'
-                });
-                self.router.navigate(['/spread/list']);
-                self.store.dispatch(new spreadActions.SetSpreadFormStateAction(null))
-            } else {
-                self.messageService.add({
-                    severity: 'error',
-                    summary: 'Server Error',
-                    detail: 'There was a problem saving.'
-                });
+    private setupSaveDoneHandler() {
+        let self = this;
+        let s3 = self.actionSubject.subscribe(a => {
+            if (a.type == spreadActions.SPREAD_ADD_DONE) {
+                let action = <spreadActions.AddSpreadDoneAction> a;
+                let outcome = action.payload.outcome;
+                if (outcome) {
+                    self.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Successfully saved!'
+                    });
+                    self.router.navigate(['/spread/list']);
+                    self.store.dispatch(new spreadActions.SetSpreadFormStateAction(null))
+                } else {
+                    self.messageService.add({
+                        severity: 'error',
+                        summary: 'Server Error',
+                        detail: 'There was a problem saving.'
+                    });
+                }            
             }
-        }
-        
-        self.store.dispatch(new spreadActions.AddSpreadAction(new Pair(spread, responseHandler)));
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_ADD, s3); 
     }
 }

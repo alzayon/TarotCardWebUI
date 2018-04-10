@@ -12,6 +12,7 @@ import {
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import { ActionsSubject } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
@@ -31,6 +32,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class CategoryViewComponent extends CategoryBaseComponent {
 
+    readonly SUBSCRIPTION_KEY_CATEGORY_VIEW = 'CategoryView';
+
     private category$: Observable<Category>;
     private category: Category = null;
 
@@ -38,6 +41,7 @@ export class CategoryViewComponent extends CategoryBaseComponent {
         private messageService: MessageService,
         private router: Router,
         private route: ActivatedRoute,
+        private actionSubject: ActionsSubject,
         private subscriptionCollectorService: SubscriptionCollectorService) {
         super(store);
     }
@@ -58,26 +62,28 @@ export class CategoryViewComponent extends CategoryBaseComponent {
                     }
                 );
 
-                let notFoundHandler = () => {
-                    self.messageService.add({
-                        severity: 'warning',
-                        summary: 'Not Found',
-                        detail: 'Item was not found!'
-                    });
-                    self.router.navigate(['/category/list']);
-                };
-
-                self.store.dispatch(new categoryActions.LoadCategoryAction(new Pair(id, notFoundHandler)));
+                self.store.dispatch(new categoryActions.LoadCategoryAction(id));
             }
         );
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_VIEW, s1);
 
-        self.subscriptionCollectorService.addSubscription('CategoryView', s1);
+        let s2 = self.actionSubject.subscribe(a => {
+            if (a.type == categoryActions.CATEGORY_LOAD_DONE_NOT_FOUND) {
+                self.messageService.add({
+                    severity: 'warning',
+                    summary: 'Not Found',
+                    detail: 'Item was not found!'
+                });
+                self.router.navigate(['/category/list']);
+            }            
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_VIEW, s2); 
     }
 
     ngOnDestroy(): void {
         let self = this;
         super.ngOnDestroy();
-        self.subscriptionCollectorService.unsubscribe('CategoryView');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_CATEGORY_VIEW);
     }
 
     private fetchHandler(response: CategoryFetchResponse) {

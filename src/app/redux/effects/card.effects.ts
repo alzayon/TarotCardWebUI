@@ -27,13 +27,11 @@ export class CardEffects {
     @Effect() loadCard$ = this.actions$
         .ofType(cardActions.CARD_LOAD)
         .switchMap((action: cardActions.LoadCardAction) => {
-            let payload = action.payload;
-            let cardId = payload.value1;
-            let notFoundHandler = payload.value2;
+            let cardId = action.payload;        
             return this.cardService.fetch(cardId)
                 .map(response => {     
                     if (!response.card) {
-                        notFoundHandler();
+                        return new cardActions.LoadCardDoneNotFoundAction();
                     } else {
                         return new cardActions.LoadCardDoneAction(response.card);
                     }                                    
@@ -44,12 +42,9 @@ export class CardEffects {
     @Effect() addCard$ = this.actions$
         .ofType(cardActions.CARD_ADD)
         .switchMap((action: cardActions.AddCardAction) => {
-            let params = action.payload;
-            let card = params.value1;
-            let callback = params.value2;
+            let card = action.payload;
             return this.cardService.add(card)
                 .map(response => { 
-                    callback(response);
                     return new cardActions.AddCardDoneAction(response);      
                 });
         });    
@@ -58,12 +53,9 @@ export class CardEffects {
     @Effect() editCard$ = this.actions$
         .ofType(cardActions.CARD_EDIT)
         .switchMap((action: cardActions.EditCardAction) => {
-            let params = action.payload;
-            let card = params.value1;
-            let callback = params.value2;
+            let card = action.payload;
             return this.cardService.edit(card)
                 .map(response => { 
-                    callback(response);
                     return new cardActions.EditCardDoneAction(response);      
                 });
         });    
@@ -72,12 +64,9 @@ export class CardEffects {
     @Effect() deleteCard$ = this.actions$
         .ofType(cardActions.CARD_DELETE)
         .switchMap((action: cardActions.DeleteCardAction) => {
-            let params = action.payload;
-            let cardId = params.value1;
-            let callback = params.value2;
+            let cardId = action.payload;            
             return this.cardService.delete(cardId)                
                 .map(outcome => { 
-                    callback(outcome);
                     return new cardActions.DeleteCardDoneAction(outcome);       
                 });
         });    

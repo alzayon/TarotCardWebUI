@@ -9,6 +9,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import { ActionsSubject } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
@@ -31,6 +32,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class CategoryAddComponent extends CategoryBaseComponent implements OnInit {
 
+    readonly SUBSCRIPTION_KEY_CATEGORY_ADD = 'CategoryAdd';
+
     private currentCategory$: Observable<Category>;
     private categoryFormState$: Observable<ICategoryFormState>;
 
@@ -38,6 +41,7 @@ export class CategoryAddComponent extends CategoryBaseComponent implements OnIni
         private categoryService: CategoryService,
         private messageService: MessageService,
         private router: Router,
+        private actionSubject: ActionsSubject,
         private subscriptionCollectorService: SubscriptionCollectorService) {
         super(store);
     }
@@ -56,14 +60,15 @@ export class CategoryAddComponent extends CategoryBaseComponent implements OnIni
                 }
             }
         );
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_ADD, s1);
 
-        self.subscriptionCollectorService.addSubscription('CategoryAdd', s1);
+        self.setupSaveDoneHandler();
     }
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         let self = this;
-        self.subscriptionCollectorService.unsubscribe('CategoryAdd');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_CATEGORY_ADD);
     }
 
     private saveEventHandler(formState: any) {
@@ -90,30 +95,36 @@ export class CategoryAddComponent extends CategoryBaseComponent implements OnIni
                 detail: 'Please enter valid values.'
             });
         }
-
     }
 
     private save(category: Category) {
         let self = this;
+        self.store.dispatch(new categoryActions.AddCategoryAction(category));
+    }
 
-        let responseHandler = (r: CategoryAddResponse) => {
-            if (r.outcome) {
-                self.messageService.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: 'Successfully saved!'
-                });
-                self.router.navigate(['/category/list']);
-                self.store.dispatch(new categoryActions.SetCategoryFormStateAction(null))
-            } else {
-                self.messageService.add({
-                    severity: 'error',
-                    summary: 'Server Error',
-                    detail: 'There was a problem saving.'
-                });
+    private setupSaveDoneHandler() {
+        let self = this;
+        let s3 = self.actionSubject.subscribe(a => {
+            if (a.type == categoryActions.CATEGORY_ADD_DONE) {
+                let action = <categoryActions.AddCategoryDoneAction> a;
+                let outcome = action.payload.outcome;
+                if (outcome) {
+                    self.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Successfully saved!'
+                    });
+                    self.router.navigate(['/category/list']);
+                    self.store.dispatch(new categoryActions.SetCategoryFormStateAction(null))
+                } else {
+                    self.messageService.add({
+                        severity: 'error',
+                        summary: 'Server Error',
+                        detail: 'There was a problem saving.'
+                    });
+                }            
             }
-        }
-
-        self.store.dispatch(new categoryActions.AddCategoryAction(new Pair(category, responseHandler)));
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_ADD, s3); 
     }
 }

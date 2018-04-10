@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import { ActionsSubject } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
@@ -33,6 +34,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class SpreadEditComponent extends SpreadBaseComponent {
 
+    readonly SUBSCRIPTION_KEY_SPREAD_EDIT = 'SpreadEdit';
+
     private currentSpread$: Observable<Spread>;
     private spreadFormState$: Observable<ISpreadFormState>;
     private spread: Spread = null;
@@ -41,6 +44,7 @@ export class SpreadEditComponent extends SpreadBaseComponent {
         private messageService: MessageService,
         private router: Router,
         private route: ActivatedRoute,
+        private actionSubject: ActionsSubject,
         private subscriptionCollectorService: SubscriptionCollectorService) {
         super(store);
     }
@@ -70,26 +74,19 @@ export class SpreadEditComponent extends SpreadBaseComponent {
                     }
                 );
 
-                let notFoundHandler = () => {
-                    self.messageService.add({
-                        severity: 'warning',
-                        summary: 'Not Found',
-                        detail: 'Item was not found!'
-                    });
-                    self.router.navigate(['/spread/list']);
-                };
-
-                self.store.dispatch(new spreadActions.LoadSpreadAction(new Pair(id, notFoundHandler)));
+                self.store.dispatch(new spreadActions.LoadSpreadAction(id));
             }
         );
-
-        self.subscriptionCollectorService.addSubscription('SpreadEdit', s1);
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_EDIT, s1);
+        
+        self.setupNotFoundHandler();
+        self.setupSaveDoneHandler();
     }
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         let self = this;
-        self.subscriptionCollectorService.unsubscribe('SpreadEdit');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_SPREAD_EDIT);
     }
 
     private saveEventHandler(formState: ISpreadFormState) {
@@ -139,6 +136,47 @@ export class SpreadEditComponent extends SpreadBaseComponent {
             }
         }
 
-        self.store.dispatch(new spreadActions.EditSpreadAction(new Pair(spread, responseHandler)));
+        self.store.dispatch(new spreadActions.EditSpreadAction(spread));
+    }
+
+    private setupNotFoundHandler() {
+        let self = this;
+        let s2 = self.actionSubject.subscribe(a => {
+            if (a.type == spreadActions.SPREAD_LOAD_DONE_NOT_FOUND) {
+                self.messageService.add({
+                    severity: 'warning',
+                    summary: 'Not Found',
+                    detail: 'Item was not found!'
+                });
+                self.router.navigate(['/spread/list']);
+            }            
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_EDIT, s2); 
+    }
+
+    private setupSaveDoneHandler() {
+        let self = this;
+        let s3 = self.actionSubject.subscribe(a => {
+            if (a.type == spreadActions.SPREAD_EDIT_DONE) {
+                let action = <spreadActions.EditSpreadDoneAction> a;
+                let outcome = action.payload.outcome;
+                if (outcome) {
+                    self.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Successfully saved!'
+                    });
+                    self.router.navigate(['/category/list']);
+                    self.store.dispatch(new spreadActions.SetSpreadFormStateAction(null))
+                } else {
+                    self.messageService.add({
+                        severity: 'error',
+                        summary: 'Server Error',
+                        detail: 'There was a problem saving.'
+                    });
+                }               
+            }
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_EDIT, s3);  
     }
 }

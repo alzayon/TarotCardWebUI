@@ -40,6 +40,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class CategoryFormComponent implements OnInit {
 
+    readonly SUBSCRIPTION_KEY_CATEGORY_FORM = 'CategoryForm';
+
     private mainFormGroup: FormGroup;
     private selectedCartType: string;
     private categoryTypesList: Array<any> = [];
@@ -104,23 +106,25 @@ export class CategoryFormComponent implements OnInit {
             self.populateForm(category);
         });
 
-        self.subscriptionCollectorService.addSubscription('CategoryForm', s1);
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_FORM, s1);
     }
 
     ngAfterViewInit(): void {
+        let self = this;
+        
         // Watch for the blur event from any input element on the form.
-        let controlBlurs: Observable<any>[] = this.formInputElements
+        let controlBlurs: Observable<any>[] = self.formInputElements
             .map((formControl: ElementRef) =>
                 Observable.fromEvent(formControl.nativeElement, 'blur'));
 
         // Merge the blur event observable with the valueChanges observable
-        let s2 = Observable.merge(this.mainFormGroup.valueChanges, ...controlBlurs)
+        let s2 = Observable.merge(self.mainFormGroup.valueChanges, ...controlBlurs)
             .debounceTime(400).subscribe(value => {
-                this.errorMessagesFound =
-                    this.validationCollector.processMessages(this.mainFormGroup);
+                self.errorMessagesFound =
+                    self.validationCollector.processMessages(self.mainFormGroup);
             });
         
-        this.subscriptionCollectorService.addSubscription('CategoryForm', s2);
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_FORM, s2);
     }
 
     private populateForm(category: Category) {
@@ -132,6 +136,6 @@ export class CategoryFormComponent implements OnInit {
 
     ngOnDestroy(): void {
         let self = this;
-        self.subscriptionCollectorService.unsubscribe('CategoryForm');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_CATEGORY_FORM);
     }
 }

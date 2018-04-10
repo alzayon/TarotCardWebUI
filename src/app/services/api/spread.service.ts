@@ -147,7 +147,6 @@ export class SpreadService extends BaseService {
                         observer.next(true);
                     }
                 })
-                .do((data) => console.log(JSON.stringify(data)))
                 .subscribe();               
         })
         .catch(this.handleError);

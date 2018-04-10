@@ -12,6 +12,7 @@ import {
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import { ActionsSubject } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
@@ -31,6 +32,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class SpreadViewComponent extends SpreadBaseComponent {
 
+    readonly SUBSCRIPTION_KEY_SPREAD_VIEW = 'SpreadView';
+
     private spread$: Observable<Spread>;
     private spread: Spread = null;
 
@@ -38,6 +41,7 @@ export class SpreadViewComponent extends SpreadBaseComponent {
         private messageService: MessageService,
         private router: Router,
         private route: ActivatedRoute,
+        private actionSubject: ActionsSubject,
         private subscriptionCollectorService: SubscriptionCollectorService) {
         super(store);
     }
@@ -58,26 +62,28 @@ export class SpreadViewComponent extends SpreadBaseComponent {
                     }
                 );
 
-                let notFoundHandler = () => {
-                    self.messageService.add({
+                self.store.dispatch(new spreadActions.LoadSpreadAction(id));
+            }
+        );
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_VIEW, s1);
+
+        let s2 = self.actionSubject.subscribe(a => {
+            if (a.type == spreadActions.SPREAD_LOAD_DONE_NOT_FOUND) {
+                self.messageService.add({
                         severity: 'warning',
                         summary: 'Not Found',
                         detail: 'Item was not found!'
                     });
-                    self.router.navigate(['/spread/list']);
-                };
-
-                self.store.dispatch(new spreadActions.LoadSpreadAction(new Pair(id, notFoundHandler)));
-            }
-        );
-
-        self.subscriptionCollectorService.addSubscription('SpreadView', s1);
+                self.router.navigate(['/spread/list']);
+            }            
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_VIEW, s2); 
     }
 
     ngOnDestroy(): void {
         let self = this;
         super.ngOnDestroy();
-        self.subscriptionCollectorService.unsubscribe('SpreadView');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_SPREAD_VIEW);
     }
 
     private fetchHandler(response: SpreadFetchResponse) {

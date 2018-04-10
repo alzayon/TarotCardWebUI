@@ -1,23 +1,23 @@
 import { Action } from '@ngrx/store';
 import { Card } from '../../domain/model/card';
-import { Pair } from '../../common/pair';
 import { CardEditResponse } from '../../services/api/response/card/card_edit.response';
 import { ICardFormState } from '../reducers/card.reducer';
 import { CardAddResponse } from '../../services/api/response/card/card_add.response';
 
-export const CARDS_LOAD:string = "CARDS_LOAD";
-export const CARDS_LOAD_SUCCESS:string = "CARDS_LOAD_SUCCESS";
-export const CARD_DELETE:string = "CARDS_DELETE";
-export const CARD_DELETE_DONE:string = "CARD_DELETE_DONE";
-export const CARD_LOAD:string = "CARD_LOAD";
-export const CARD_LOAD_DONE:string = "CARD_LOAD_DONE";
-export const CARD_EDIT:string = "CARD_EDIT";
-export const CARD_EDIT_DONE:string = "CARD_EDIT_DONE";
-export const CARD_ADD:string = "CARD_ADD";
-export const CARD_ADD_DONE:string = "CARD_ADD_DONE";
-export const CARD_DO_NOTHING:string = "CARD_DO_NOTHING";
-export const CARD_UPDATE_CURRENT:string = "CARD_UPDATE_CURRENT";
-export const CARD_SET_FORM_STATE:string = "CARD_SET_FORM_STATE";
+export const CARDS_LOAD: string = "CARDS_LOAD";
+export const CARDS_LOAD_SUCCESS: string = "CARDS_LOAD_SUCCESS";
+export const CARD_DELETE: string = "CARDS_DELETE";
+export const CARD_DELETE_DONE: string = "CARD_DELETE_DONE";
+export const CARD_LOAD: string = "CARD_LOAD";
+export const CARD_LOAD_DONE: string = "CARD_LOAD_DONE";
+export const CARD_LOAD_DONE_NOT_FOUND: string = "CARD_LOAD_DONE_NOT_FOUND";
+export const CARD_EDIT: string = "CARD_EDIT";
+export const CARD_EDIT_DONE: string = "CARD_EDIT_DONE";
+export const CARD_ADD: string = "CARD_ADD";
+export const CARD_ADD_DONE: string = "CARD_ADD_DONE";
+export const CARD_DO_NOTHING: string = "CARD_DO_NOTHING";
+export const CARD_UPDATE_CURRENT: string = "CARD_UPDATE_CURRENT";
+export const CARD_SET_FORM_STATE: string = "CARD_SET_FORM_STATE";
 
 export class LoadCardsAction implements Action {
     readonly type = CARDS_LOAD;
@@ -36,7 +36,7 @@ export class LoadCardsSuccessAction implements Action {
 export class DeleteCardAction implements Action {
     readonly type = CARD_DELETE;
 
-    constructor(public payload:Pair<number, ((outcome: boolean) => void )>) {
+    constructor(public payload:number) {
     }
 }
 
@@ -50,8 +50,7 @@ export class DeleteCardDoneAction implements Action {
 export class LoadCardAction implements Action {
     readonly type = CARD_LOAD;
 
-    //Value of the pair is the callback when the card is not found
-    constructor(public payload:Pair<number, (() => void )>) {
+    constructor(public payload: number) {
     }
 }
 
@@ -62,10 +61,17 @@ export class LoadCardDoneAction implements Action {
     }
 }
 
+export class LoadCardDoneNotFoundAction implements Action {
+    readonly type = CARD_LOAD_DONE_NOT_FOUND;
+
+    constructor() {
+    }
+}
+
 export class EditCardAction implements Action {
     readonly type = CARD_EDIT;
 
-    constructor(public payload: Pair<Card, ((response: CardEditResponse) => void )>) {        
+    constructor(public payload: Card) {        
     }
 }
 
@@ -79,7 +85,7 @@ export class EditCardDoneAction implements Action {
 export class AddCardAction implements Action {
     readonly type = CARD_ADD;
 
-    constructor(public payload: Pair<Card, ((response: CardAddResponse) => void )>) {        
+    constructor(public payload: Card) {        
     }
 }
 
@@ -115,5 +121,5 @@ export type Actions = LoadCardsAction | LoadCardsSuccessAction |
     DeleteCardAction | DeleteCardDoneAction | 
     EditCardAction | EditCardDoneAction |
     AddCardAction | AddCardDoneAction |
-    LoadCardAction | LoadCardDoneAction |
+    LoadCardAction | LoadCardDoneAction | LoadCardDoneNotFoundAction
     UpdateCurrentCardAction

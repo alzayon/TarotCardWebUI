@@ -1,7 +1,7 @@
 import { Card } from "../../domain/model/card";
 import { ActionReducer } from "@ngrx/store";
 
-import * as CardActions from "../actions/card.actions";
+import * as cardActions from "../actions/card.actions";
 import { CardType } from "../../domain/enums/card_type";
 
 export interface ICardState {
@@ -23,22 +23,22 @@ const initState: ICardState = {
     formState: null
 }
 
-export function cardReducer(state = initState, action:CardActions.Actions): ICardState {
+export function cardReducer(state = initState, action:cardActions.Actions): ICardState {
     switch (action.type) {
-        case CardActions.CARDS_LOAD_SUCCESS: {
-            let specificAction = <CardActions.LoadCardsSuccessAction> action;            
+        case cardActions.CARDS_LOAD_SUCCESS: {
+            let specificAction = <cardActions.LoadCardsSuccessAction> action;            
             return Object.assign({}, state, { cards: specificAction.payload });
         }
-        case CardActions.CARD_LOAD_DONE: {
-            let specificAction = <CardActions.LoadCardDoneAction> action;            
+        case cardActions.CARD_LOAD_DONE: {
+            let specificAction = <cardActions.LoadCardDoneAction> action;            
             return Object.assign({}, state, { currentCard: specificAction.payload });
         }
-        case CardActions.CARD_UPDATE_CURRENT: {        
-            let specificAction = <CardActions.UpdateCurrentCardAction> action;
+        case cardActions.CARD_UPDATE_CURRENT: {        
+            let specificAction = <cardActions.UpdateCurrentCardAction> action;
             return Object.assign({}, state, { currentCard: specificAction.payload });
         }
-        case CardActions.CARD_SET_FORM_STATE: {
-            let specificAction = <CardActions.SetCardFormStateAction> action;
+        case cardActions.CARD_SET_FORM_STATE: {
+            let specificAction = <cardActions.SetCardFormStateAction> action;
             return Object.assign({}, state, { formState: specificAction.payload });
         }
         default: {

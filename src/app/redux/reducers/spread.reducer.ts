@@ -1,7 +1,7 @@
 import { Spread } from "../../domain/model/spread";
 import { ActionReducer } from "@ngrx/store";
 
-import * as SpreadActions from "../actions/spread.actions";
+import * as spreadActions from "../actions/spread.actions";
 
 export interface ISpreadState {
     spreads: Array<Spread>,
@@ -21,22 +21,22 @@ const initState: ISpreadState = {
     formState: null
 }
 
-export function spreadReducer(state = initState, action:SpreadActions.Actions): ISpreadState {
+export function spreadReducer(state = initState, action:spreadActions.Actions): ISpreadState {
     switch (action.type) {
-        case SpreadActions.SPREADS_LOAD_SUCCESS: {
-            let specificAction = <SpreadActions.LoadSpreadsSuccessAction> action;            
+        case spreadActions.SPREADS_LOAD_SUCCESS: {
+            let specificAction = <spreadActions.LoadSpreadsSuccessAction> action;            
             return Object.assign({}, state, { spreads: specificAction.payload });
         }
-        case SpreadActions.SPREAD_LOAD_DONE: {
-            let specificAction = <SpreadActions.LoadSpreadDoneAction> action;            
+        case spreadActions.SPREAD_LOAD_DONE: {
+            let specificAction = <spreadActions.LoadSpreadDoneAction> action;            
             return Object.assign({}, state, { currentSpread: specificAction.payload });
         }
-        case SpreadActions.SPREAD_UPDATE_CURRENT: {        
-            let specificAction = <SpreadActions.UpdateCurrentSpreadAction> action;
+        case spreadActions.SPREAD_UPDATE_CURRENT: {        
+            let specificAction = <spreadActions.UpdateCurrentSpreadAction> action;
             return Object.assign({}, state, { currentSpread: specificAction.payload });
         }
-        case SpreadActions.SPREAD_SET_FORM_STATE: {
-            let specificAction = <SpreadActions.SetSpreadFormStateAction> action;
+        case spreadActions.SPREAD_SET_FORM_STATE: {
+            let specificAction = <spreadActions.SetSpreadFormStateAction> action;
             return Object.assign({}, state, { formState: specificAction.payload });
         }
         default: {

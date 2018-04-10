@@ -37,6 +37,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class CardFormComponent implements OnInit {
     
+    readonly SUBSCRIPTION_KEY_CARD_FORM = 'CardForm';
+
     private mainFormGroup: FormGroup;
     private selectedCartType: string;
     private cardTypesList:Array<any> = [];
@@ -106,23 +108,25 @@ export class CardFormComponent implements OnInit {
             self.populateForm(card);
         });            
 
-        self.subscriptionCollectorService.addSubscription('CardForm', s1);
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CARD_FORM, s1);
     }
 
-    ngAfterViewInit(): void {
+    ngAfterViewInit(): void {    
+        let self = this;
+
         // Watch for the blur event from any input element on the form.
-        let controlBlurs: Observable<any>[] = this.formInputElements
+        let controlBlurs: Observable<any>[] = self.formInputElements
             .map((formControl: ElementRef) => 
                 Observable.fromEvent(formControl.nativeElement, 'blur'));
 
         // Merge the blur event observable with the valueChanges observable
-        let s2 = Observable.merge(this.mainFormGroup.valueChanges, ...controlBlurs)
+        let s2 = Observable.merge(self.mainFormGroup.valueChanges, ...controlBlurs)
                   .debounceTime(400).subscribe(value => {
-                        this.errorMessagesFound = 
-                            this.validationCollector.processMessages(this.mainFormGroup);
+                    self.errorMessagesFound = 
+                        self.validationCollector.processMessages(self.mainFormGroup);
         });
 
-        this.subscriptionCollectorService.addSubscription('CardForm', s2);
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CARD_FORM, s2);
     }
 
     private populateForm(card:Card) {
@@ -135,6 +139,6 @@ export class CardFormComponent implements OnInit {
 
     ngOnDestroy(): void {
         let self = this;
-        self.subscriptionCollectorService.unsubscribe('CardForm');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_CARD_FORM);
     }
 }

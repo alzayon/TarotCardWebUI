@@ -27,13 +27,11 @@ export class CategoryEffects {
     @Effect() loadCategory$ = this.actions$
         .ofType(categoryActions.CATEGORY_LOAD)
         .switchMap((action: categoryActions.LoadCategoryAction) => {
-            let payload = action.payload;
-            let categoryId = payload.value1;
-            let notFoundHandler = payload.value2;
+            let categoryId = action.payload;
             return this.categoryService.fetch(categoryId)
                 .map(response => {     
                     if (!response.category) {
-                        notFoundHandler();
+                        return new categoryActions.LoadCategoryDoneNotFoundAction();
                     } else {
                         return new categoryActions.LoadCategoryDoneAction(response.category);
                     }                                    
@@ -44,12 +42,9 @@ export class CategoryEffects {
     @Effect() addCategory$ = this.actions$
         .ofType(categoryActions.CATEGORY_ADD)
         .switchMap((action: categoryActions.AddCategoryAction) => {
-            let params = action.payload;
-            let category = params.value1;
-            let callback = params.value2;
+            let category = action.payload;
             return this.categoryService.add(category)
                 .map(response => { 
-                    callback(response);
                     return new categoryActions.AddCategoryDoneAction(response);      
                 });
         });    
@@ -58,12 +53,9 @@ export class CategoryEffects {
     @Effect() editCategory$ = this.actions$
         .ofType(categoryActions.CATEGORY_EDIT)
         .switchMap((action: categoryActions.EditCategoryAction) => {
-            let params = action.payload;
-            let category = params.value1;
-            let callback = params.value2;
+            let category = action.payload;
             return this.categoryService.edit(category)
-                .map(response => { 
-                    callback(response);
+                .map(response => {                     
                     return new categoryActions.EditCategoryDoneAction(response);      
                 });
         });    
@@ -72,12 +64,9 @@ export class CategoryEffects {
     @Effect() deleteCategory$ = this.actions$
         .ofType(categoryActions.CATEGORY_DELETE)
         .switchMap((action: categoryActions.DeleteCategoryAction) => {
-            let params = action.payload;
-            let categoryId = params.value1;
-            let callback = params.value2;
+            let categoryId = action.payload;
             return this.categoryService.delete(categoryId)                
                 .map(outcome => { 
-                    callback(outcome);
                     return new categoryActions.DeleteCategoryDoneAction(outcome);       
                 });
         });    

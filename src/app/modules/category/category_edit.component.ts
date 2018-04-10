@@ -11,6 +11,7 @@ import { Subscription } from 'rxjs/Subscription';
 
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import { ActionsSubject } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
@@ -33,6 +34,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class CategoryEditComponent extends CategoryBaseComponent {
 
+    readonly SUBSCRIPTION_KEY_CATEGORY_EDIT = 'CategoryEdit';
+
     private currentCategory$: Observable<Category>;
     private categoryFormState$: Observable<ICategoryFormState>;
     private category: Category = null;
@@ -41,6 +44,7 @@ export class CategoryEditComponent extends CategoryBaseComponent {
         private messageService: MessageService,
         private router: Router,
         private route: ActivatedRoute,
+        private actionSubject: ActionsSubject,
         private subscriptionCollectorService: SubscriptionCollectorService) {
         super(store);
     }
@@ -70,26 +74,19 @@ export class CategoryEditComponent extends CategoryBaseComponent {
                     }
                 );
 
-                let notFoundHandler = () => {
-                    self.messageService.add({
-                        severity: 'warning',
-                        summary: 'Not Found',
-                        detail: 'Item was not found!'
-                    });
-                    self.router.navigate(['/category/list']);
-                };
-
-                self.store.dispatch(new categoryActions.LoadCategoryAction(new Pair(id, notFoundHandler)));
+                self.store.dispatch(new categoryActions.LoadCategoryAction(id));
             }
         );
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_EDIT, s1);
 
-        self.subscriptionCollectorService.addSubscription('CategoryEdit', s1);
+        self.setupNotFoundHandler();
+        self.setupSaveDoneHandler();
     }
 
     ngOnDestroy(): void {
         super.ngOnDestroy();
         let self = this;
-        self.subscriptionCollectorService.unsubscribe('CategoryEdit');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_CATEGORY_EDIT);
     }
 
     private saveEventHandler(formState: ICategoryFormState) {
@@ -120,25 +117,47 @@ export class CategoryEditComponent extends CategoryBaseComponent {
 
     private save(category: Category) {
         let self = this;
+        self.store.dispatch(new categoryActions.EditCategoryAction(category));
+    }
 
-        let responseHandler = (r: CategoryEditResponse) => {
-            if (r.outcome) {
+    private setupNotFoundHandler() {
+        let self = this;
+        let s2 = self.actionSubject.subscribe(a => {
+            if (a.type == categoryActions.CATEGORY_LOAD_DONE_NOT_FOUND) {
                 self.messageService.add({
-                    severity: 'success',
-                    summary: 'Success',
-                    detail: 'Successfully saved!'
+                    severity: 'warning',
+                    summary: 'Not Found',
+                    detail: 'Item was not found!'
                 });
                 self.router.navigate(['/category/list']);
-                self.store.dispatch(new categoryActions.SetCategoryFormStateAction(null))
-            } else {
-                self.messageService.add({
-                    severity: 'error',
-                    summary: 'Server Error',
-                    detail: 'There was a problem saving.'
-                });
-            }
-        }
+            }            
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_EDIT, s2); 
+    }
 
-        self.store.dispatch(new categoryActions.EditCategoryAction(new Pair(category, responseHandler)));
+    private setupSaveDoneHandler() {
+        let self = this;
+        let s3 = self.actionSubject.subscribe(a => {
+            if (a.type == categoryActions.CATEGORY_EDIT_DONE) {
+                let action = <categoryActions.EditCategoryDoneAction> a;
+                let outcome = action.payload.outcome;
+                if (outcome) {
+                    self.messageService.add({
+                        severity: 'success',
+                        summary: 'Success',
+                        detail: 'Successfully saved!'
+                    });
+                    self.router.navigate(['/category/list']);
+                    self.store.dispatch(new categoryActions.SetCategoryFormStateAction(null))
+                } else {
+                    self.messageService.add({
+                        severity: 'error',
+                        summary: 'Server Error',
+                        detail: 'There was a problem saving.'
+                    });
+                }               
+            }
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_EDIT, s3);  
     }
 }

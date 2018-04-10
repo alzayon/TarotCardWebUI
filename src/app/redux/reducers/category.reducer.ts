@@ -1,7 +1,7 @@
 import { Category } from "../../domain/model/category";
 import { ActionReducer } from "@ngrx/store";
 
-import * as CategoryActions from "../actions/category.actions";
+import * as categoryActions from "../actions/category.actions";
 
 export interface ICategoryState {
     categorys: Array<Category>,
@@ -22,22 +22,22 @@ const initState: ICategoryState = {
     formState: null
 }
 
-export function categoryReducer(state = initState, action:CategoryActions.Actions): ICategoryState {
+export function categoryReducer(state = initState, action:categoryActions.Actions): ICategoryState {
     switch (action.type) {
-        case CategoryActions.CATEGORIES_LOAD_SUCCESS: {
-            let specificAction = <CategoryActions.LoadCategoriesSuccessAction> action;            
+        case categoryActions.CATEGORIES_LOAD_SUCCESS: {
+            let specificAction = <categoryActions.LoadCategoriesSuccessAction> action;            
             return Object.assign({}, state, { categorys: specificAction.payload });
         }
-        case CategoryActions.CATEGORY_LOAD_DONE: {
-            let specificAction = <CategoryActions.LoadCategoryDoneAction> action;            
+        case categoryActions.CATEGORY_LOAD_DONE: {
+            let specificAction = <categoryActions.LoadCategoryDoneAction> action;            
             return Object.assign({}, state, { currentCategory: specificAction.payload });
         }
-        case CategoryActions.CATEGORY_UPDATE_CURRENT: {        
-            let specificAction = <CategoryActions.UpdateCurrentCategoryAction> action;
+        case categoryActions.CATEGORY_UPDATE_CURRENT: {        
+            let specificAction = <categoryActions.UpdateCurrentCategoryAction> action;
             return Object.assign({}, state, { currentCategory: specificAction.payload });
         }
-        case CategoryActions.CATEGORY_SET_FORM_STATE: {
-            let specificAction = <CategoryActions.SetCategoryFormStateAction> action;
+        case categoryActions.CATEGORY_SET_FORM_STATE: {
+            let specificAction = <categoryActions.SetCategoryFormStateAction> action;
             return Object.assign({}, state, { formState: specificAction.payload });
         }
         default: {

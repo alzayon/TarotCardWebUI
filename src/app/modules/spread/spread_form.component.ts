@@ -40,6 +40,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class SpreadFormComponent implements OnInit {
 
+    readonly SUBSCRIPTION_KEY_SPREAD_FORM = 'SpreadForm';
+
     private mainFormGroup: FormGroup;
     private selectedCartType: string;
     private spreadTypesList: Array<any> = [];
@@ -103,23 +105,25 @@ export class SpreadFormComponent implements OnInit {
             self.populateForm(spread);
         });
 
-        self.subscriptionCollectorService.addSubscription('SpreadForm', s1);
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_FORM, s1);
     }
 
     ngAfterViewInit(): void {
+        let self = this;
+
         // Watch for the blur event from any input element on the form.
-        let controlBlurs: Observable<any>[] = this.formInputElements
+        let controlBlurs: Observable<any>[] = self.formInputElements
             .map((formControl: ElementRef) =>
                 Observable.fromEvent(formControl.nativeElement, 'blur'));
 
         // Merge the blur event observable with the valueChanges observable
-        let s2 = Observable.merge(this.mainFormGroup.valueChanges, ...controlBlurs)
+        let s2 = Observable.merge(self.mainFormGroup.valueChanges, ...controlBlurs)
             .debounceTime(400).subscribe(value => {
-                this.errorMessagesFound =
-                    this.validationCollector.processMessages(this.mainFormGroup);
+                self.errorMessagesFound =
+                    self.validationCollector.processMessages(self.mainFormGroup);
             });
          
-        this.subscriptionCollectorService.addSubscription('SpreadForm', s2);     
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_FORM, s2);     
     }
 
     private populateForm(spread: Spread) {
@@ -131,6 +135,6 @@ export class SpreadFormComponent implements OnInit {
 
     ngOnDestroy(): void {
         let self = this;
-        self.subscriptionCollectorService.unsubscribe('SpreadForm');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_SPREAD_FORM);
     }
 }

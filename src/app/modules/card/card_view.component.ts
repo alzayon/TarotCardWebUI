@@ -8,6 +8,7 @@ import { Router,
 import { Subscription } from 'rxjs/Subscription';
 import { Observable } from 'rxjs/Observable';
 import { Store } from '@ngrx/store';
+import { ActionsSubject } from '@ngrx/store';
 
 import { MessageService } from 'primeng/components/common/messageservice';
 
@@ -28,6 +29,8 @@ import { SubscriptionCollectorService } from '../../services/general/subscriptio
 })
 export class CardViewComponent extends CardBaseComponent {
     
+    readonly SUBSCRIPTION_KEY_CARD_VIEW = 'CardView';
+
     private card$: Observable<Card>;
     private card:Card = null;
 
@@ -35,6 +38,7 @@ export class CardViewComponent extends CardBaseComponent {
         private messageService:MessageService,
         private router:Router,
         private route: ActivatedRoute,
+        private actionSubject: ActionsSubject,
         private subscriptionCollectorService: SubscriptionCollectorService) {
         super(store); 
     }
@@ -55,25 +59,27 @@ export class CardViewComponent extends CardBaseComponent {
                     }
                 );
 
-                let notFoundHandler = () => {
-                    self.messageService.add({ 
-                        severity: 'warning', 
-                        summary: 'Not Found', 
-                        detail: 'Item was not found!'});
-                        self.router.navigate(['/card/list']);
-                };  
-
-                self.store.dispatch(new cardActions.LoadCardAction(new Pair(id, notFoundHandler)));
+                self.store.dispatch(new cardActions.LoadCardAction(id));
             }
         );
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CARD_VIEW, s1);
 
-        self.subscriptionCollectorService.addSubscription('CardView', s1);
+        let s2 = self.actionSubject.subscribe(a => {
+            if (a.type == cardActions.CARD_LOAD_DONE_NOT_FOUND) {
+                self.messageService.add({ 
+                    severity: 'warning', 
+                    summary: 'Not Found', 
+                    detail: 'Item was not found!'});
+                    self.router.navigate(['/card/list']);
+            }            
+        });
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CARD_VIEW, s2);  
     }
 
     ngOnDestroy(): void {
         let self = this;
         super.ngOnDestroy();
-        self.subscriptionCollectorService.unsubscribe('CardView');
+        self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_CARD_VIEW);
     }
 
     private fetchHandler(response:CardFetchResponse) {
