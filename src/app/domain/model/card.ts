@@ -1,7 +1,9 @@
-import { CardType } from '../enums/card_type';
+import { CardType } from "../enums/card_type";
 
 export class Card {
-    constructor(public id: number, 
+    constructor(
+        public id: number,
         public name: string,
-        public type: CardType) {}
+        public type: CardType
+    ) {}
 }

@@ -1,8 +1,8 @@
-import { Action } from '@ngrx/store';
-import { Spread } from '../../domain/model/spread';
-import { SpreadEditResponse } from '../../services/api/response/spread/spread_edit.response';
-import { ISpreadFormState } from '../reducers/spread.reducer';
-import { SpreadAddResponse } from '../../services/api/response/spread/spread_add.response';
+import { Action } from "@ngrx/store";
+import { Spread } from "../../domain/model/spread";
+import { SpreadEditResponse } from "../../services/api/response/spread/spread_edit.response";
+import { ISpreadFormState } from "../reducers/spread.reducer";
+import { SpreadAddResponse } from "../../services/api/response/spread/spread_add.response";
 
 export const SPREADS_LOAD: string = "SPREADS_LOAD";
 export const SPREADS_LOAD_SUCCESS: string = "SPREADS_LOAD_SUCCESS";
@@ -24,14 +24,14 @@ export class LoadSpreadsAction implements Action {
 
     constructor() {
     }
-} 
+}
 
 export class LoadSpreadsSuccessAction implements Action {
     readonly type = SPREADS_LOAD_SUCCESS;
 
     constructor(public payload: Array<Spread>) {
     }
-} 
+}
 
 export class DeleteSpreadAction implements Action {
     readonly type = SPREAD_DELETE;
@@ -71,42 +71,42 @@ export class LoadSpreadDoneNotFoundAction implements Action {
 export class EditSpreadAction implements Action {
     readonly type = SPREAD_EDIT;
 
-    constructor(public payload: Spread) {        
+    constructor(public payload: Spread) {
     }
 }
 
 export class EditSpreadDoneAction implements Action {
     readonly type = SPREAD_EDIT_DONE;
 
-    constructor(public payload: SpreadEditResponse) {        
+    constructor(public payload: SpreadEditResponse) {
     }
 }
 
 export class AddSpreadAction implements Action {
     readonly type = SPREAD_ADD;
 
-    constructor(public payload: Spread) {        
+    constructor(public payload: Spread) {
     }
 }
 
 export class AddSpreadDoneAction implements Action {
     readonly type = SPREAD_ADD_DONE;
 
-    constructor(public payload: SpreadAddResponse) {        
+    constructor(public payload: SpreadAddResponse) {
     }
 }
 
 export class UpdateCurrentSpreadAction implements Action {
     readonly type = SPREAD_UPDATE_CURRENT;
 
-    constructor(public payload: Spread) {        
+    constructor(public payload: Spread) {
     }
 }
 
 export class SetSpreadFormStateAction implements Action {
     readonly type = SPREAD_SET_FORM_STATE;
 
-    constructor(public payload: ISpreadFormState) {        
+    constructor(public payload: ISpreadFormState) {
     }
 }
 
@@ -118,8 +118,8 @@ export class DoNothing implements Action {
 }
 
 export type Actions = LoadSpreadsAction | LoadSpreadsSuccessAction |
-    DeleteSpreadAction | DeleteSpreadDoneAction | 
+    DeleteSpreadAction | DeleteSpreadDoneAction |
     EditSpreadAction | EditSpreadDoneAction |
     AddSpreadAction | AddSpreadDoneAction |
-    LoadSpreadAction | LoadSpreadDoneAction | LoadSpreadDoneNotFoundAction
-    UpdateCurrentSpreadAction
+    LoadSpreadAction | LoadSpreadDoneAction | LoadSpreadDoneNotFoundAction |
+    UpdateCurrentSpreadAction;

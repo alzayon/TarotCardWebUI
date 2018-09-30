@@ -20,7 +20,6 @@
     "@angular/core": "^4.4.6",
     "@angular/forms": "^4.2.0",
     "@angular/http": "^4.2.0",
-    
     "@angular/platform-browser": "^4.2.0",
     "@angular/platform-browser-dynamic": "^4.2.0",
     "@angular/router": "^4.2.0",
@@ -68,7 +67,7 @@
     "style-loader": "^0.13.1",
     "stylus-loader": "^3.0.1",
     "ts-node": "~2.0.0",
-    "tslint": "~4.4.2",
+    "tslint": "^4.2.0",
     "typescript": "~2.4.1",
     "url-loader": "^0.6.2",
     "webpack": "~3.7.1",

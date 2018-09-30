@@ -5,49 +5,46 @@ import {
     OnDestroy,
     ViewChildren,
     ElementRef
-} from '@angular/core';
+} from "@angular/core";
 
 import {
     FormBuilder,
     FormGroup,
-    FormControl,
-    FormArray,
     Validators,
     FormControlName
-} from '@angular/forms';
+} from "@angular/forms";
 
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from "@angular/router";
 
-import { Observable } from 'rxjs/Observable';
-import { Store } from '@ngrx/store';
+import { Observable } from "rxjs/Observable";
+import { Store } from "@ngrx/store";
 
-import 'rxjs/add/operator/debounceTime';
-import 'rxjs/add/observable/fromEvent';
-import 'rxjs/add/observable/merge';
+import "rxjs/add/operator/debounceTime";
+import "rxjs/add/observable/fromEvent";
+import "rxjs/add/observable/merge";
 
-import { EnumHelper } from '../../domain/helpers/enum_helper';
-import { ValidationCollectorService } from '../../services/validators/validation_collector.service';
-import { Spread } from '../../domain/model/spread';
-import { RootState } from '../../redux/reducers/root.reducer';
-import * as spreadActions from '../../redux/actions/spread.actions';
-import { ISpreadFormState } from '../../redux/reducers/spread.reducer';
-import { SubscriptionCollectorService } from '../../services/general/subscription_collector.service';
+import { ValidationCollectorService } from "../../services/validators/validation_collector.service";
+import { Spread } from "../../domain/model/spread";
+import { RootState } from "../../redux/reducers/root.reducer";
+import * as spreadActions from "../../redux/actions/spread.actions";
+import { ISpreadFormState } from "../../redux/reducers/spread.reducer";
+import { SubscriptionCollectorService } from "../../services/general/subscription_collector.service";
 
 @Component({
-    selector: 'spread-form',
-    templateUrl: './views/spread_form.component.html',
+    selector: "spread-form",
+    templateUrl: "./views/spread_form.component.html",
     providers: [ValidationCollectorService]
 })
-export class SpreadFormComponent implements OnInit {
+export class SpreadFormComponent implements OnInit, AfterViewInit, OnDestroy {
 
-    readonly SUBSCRIPTION_KEY_SPREAD_FORM = 'SpreadForm';
+    readonly SUBSCRIPTION_KEY_SPREAD_FORM = "SpreadForm";
 
     private mainFormGroup: FormGroup;
     private selectedCartType: string;
     private spreadTypesList: Array<any> = [];
 
-    //Find all child components that are instances of FormControlName and 
-    //obtain all references to their native dom element
+    // Find all child components that are instances of FormControlName and
+    // obtain all references to their native dom element
     @ViewChildren(FormControlName, { read: ElementRef })
     private formInputElements: ElementRef[];
 
@@ -56,10 +53,10 @@ export class SpreadFormComponent implements OnInit {
 
     private validationMessages = {
         spreadName: {
-            required: 'Spread name is required.'
+            required: "Spread name is required."
         },
         spreadType: {
-            required: 'Spread type is required.'
+            required: "Spread type is required."
         }
     };
 
@@ -73,8 +70,8 @@ export class SpreadFormComponent implements OnInit {
     }
 
     save(): void {
-        let self = this;
-        
+        const self = this;
+
         let formGroup = self.mainFormGroup;
         let formValues = formGroup.value;
 
@@ -87,14 +84,14 @@ export class SpreadFormComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        let self = this;
+        const self = this;
 
-        // Define an instance of the validator for use with this form, 
-        // passing in this form's set of validation messages.
+        // Define an instance of the validator for use with this form,
+        // passing in this form"s set of validation messages.
         self.validationCollector.setValidationMessages(this.validationMessages);
 
         self.mainFormGroup = self.fb.group({
-            spreadName: ['', [Validators.required,
+            spreadName: ["", [Validators.required,
             Validators.minLength(3),
             Validators.maxLength(50)]]
         });
@@ -109,12 +106,12 @@ export class SpreadFormComponent implements OnInit {
     }
 
     ngAfterViewInit(): void {
-        let self = this;
+        const self = this;
 
         // Watch for the blur event from any input element on the form.
         let controlBlurs: Observable<any>[] = self.formInputElements
             .map((formControl: ElementRef) =>
-                Observable.fromEvent(formControl.nativeElement, 'blur'));
+                Observable.fromEvent(formControl.nativeElement, "blur"));
 
         // Merge the blur event observable with the valueChanges observable
         let s2 = Observable.merge(self.mainFormGroup.valueChanges, ...controlBlurs)
@@ -122,8 +119,8 @@ export class SpreadFormComponent implements OnInit {
                 self.errorMessagesFound =
                     self.validationCollector.processMessages(self.mainFormGroup);
             });
-         
-        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_FORM, s2);     
+
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_SPREAD_FORM, s2);
     }
 
     private populateForm(spread: Spread) {
@@ -134,7 +131,7 @@ export class SpreadFormComponent implements OnInit {
     }
 
     ngOnDestroy(): void {
-        let self = this;
+        const self = this;
         self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_SPREAD_FORM);
     }
 }

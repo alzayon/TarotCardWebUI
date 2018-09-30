@@ -1,8 +1,8 @@
-import { Action } from '@ngrx/store';
-import { Card } from '../../domain/model/card';
-import { CardEditResponse } from '../../services/api/response/card/card_edit.response';
-import { ICardFormState } from '../reducers/card.reducer';
-import { CardAddResponse } from '../../services/api/response/card/card_add.response';
+import { Action } from "@ngrx/store";
+import { Card } from "../../domain/model/card";
+import { CardEditResponse } from "../../services/api/response/card/card_edit.response";
+import { ICardFormState } from "../reducers/card.reducer";
+import { CardAddResponse } from "../../services/api/response/card/card_add.response";
 
 export const CARDS_LOAD: string = "CARDS_LOAD";
 export const CARDS_LOAD_SUCCESS: string = "CARDS_LOAD_SUCCESS";
@@ -24,19 +24,19 @@ export class LoadCardsAction implements Action {
 
     constructor() {
     }
-} 
+}
 
 export class LoadCardsSuccessAction implements Action {
     readonly type = CARDS_LOAD_SUCCESS;
 
     constructor(public payload: Array<Card>) {
     }
-} 
+}
 
 export class DeleteCardAction implements Action {
     readonly type = CARD_DELETE;
 
-    constructor(public payload:number) {
+    constructor(public payload: number) {
     }
 }
 
@@ -71,42 +71,42 @@ export class LoadCardDoneNotFoundAction implements Action {
 export class EditCardAction implements Action {
     readonly type = CARD_EDIT;
 
-    constructor(public payload: Card) {        
+    constructor(public payload: Card) {
     }
 }
 
 export class EditCardDoneAction implements Action {
     readonly type = CARD_EDIT_DONE;
 
-    constructor(public payload: CardEditResponse) {        
+    constructor(public payload: CardEditResponse) {
     }
 }
 
 export class AddCardAction implements Action {
     readonly type = CARD_ADD;
 
-    constructor(public payload: Card) {        
+    constructor(public payload: Card) {
     }
 }
 
 export class AddCardDoneAction implements Action {
     readonly type = CARD_ADD_DONE;
 
-    constructor(public payload: CardAddResponse) {        
+    constructor(public payload: CardAddResponse) {
     }
 }
 
 export class UpdateCurrentCardAction implements Action {
     readonly type = CARD_UPDATE_CURRENT;
 
-    constructor(public payload: Card) {        
+    constructor(public payload: Card) {
     }
 }
 
 export class SetCardFormStateAction implements Action {
     readonly type = CARD_SET_FORM_STATE;
 
-    constructor(public payload: ICardFormState) {        
+    constructor(public payload: ICardFormState) {
     }
 }
 
@@ -118,8 +118,8 @@ export class DoNothing implements Action {
 }
 
 export type Actions = LoadCardsAction | LoadCardsSuccessAction |
-    DeleteCardAction | DeleteCardDoneAction | 
+    DeleteCardAction | DeleteCardDoneAction |
     EditCardAction | EditCardDoneAction |
     AddCardAction | AddCardDoneAction |
-    LoadCardAction | LoadCardDoneAction | LoadCardDoneNotFoundAction
-    UpdateCurrentCardAction
+    LoadCardAction | LoadCardDoneAction | LoadCardDoneNotFoundAction |
+    UpdateCurrentCardAction;

@@ -1,44 +1,37 @@
 import {
     Component,
     OnInit,
-    AfterViewInit,
     OnDestroy
-} from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
+} from "@angular/core";
+import { Router } from "@angular/router";
 
-import { Subscription } from 'rxjs/Subscription';
-import { Observable } from 'rxjs/Observable';
-import { Store } from '@ngrx/store';
-import { ActionsSubject } from '@ngrx/store';
+import { Observable } from "rxjs/Observable";
+import { Store } from "@ngrx/store";
+import { ActionsSubject } from "@ngrx/store";
 
-import { MessageService } from 'primeng/components/common/messageservice';
+import { MessageService } from "primeng/components/common/messageservice";
 
-import { RootState } from '../../redux/reducers/root.reducer';
-import * as categoryActions from '../../redux/actions/category.actions';
-import * as generalActions from '../../redux/actions/general.actions';
+import { RootState } from "../../redux/reducers/root.reducer";
+import * as categoryActions from "../../redux/actions/category.actions";
+import * as generalActions from "../../redux/actions/general.actions";
 
-import { CategoryService } from '../../services/api/category.service';
-import { Category } from '../../domain/model/category';
-import { CategoryBaseComponent } from './category_base.component';
-import { Pair } from '../../common/pair';
-import { CategoryAddResponse } from '../../services/api/response/category/category_add.response';
-import { ICategoryFormState } from '../../redux/reducers/category.reducer';
-import { SubscriptionCollectorService } from '../../services/general/subscription_collector.service';
+import { Category } from "../../domain/model/category";
+import { CategoryBaseComponent } from "./category_base.component";
+import { ICategoryFormState } from "../../redux/reducers/category.reducer";
+import { SubscriptionCollectorService } from "../../services/general/subscription_collector.service";
 
 
 @Component({
-    selector: 'category-add',
-    templateUrl: './views/category_add.component.html'
+    selector: "category-add",
+    templateUrl: "./views/category_add.component.html"
 })
-export class CategoryAddComponent extends CategoryBaseComponent implements OnInit {
+export class CategoryAddComponent extends CategoryBaseComponent implements OnInit, OnDestroy {
 
-    readonly SUBSCRIPTION_KEY_CATEGORY_ADD = 'CategoryAdd';
+    readonly SUBSCRIPTION_KEY_CATEGORY_ADD = "CategoryAdd";
 
-    private currentCategory$: Observable<Category>;
     private categoryFormState$: Observable<ICategoryFormState>;
 
     constructor(protected store: Store<RootState>,
-        private categoryService: CategoryService,
         private messageService: MessageService,
         private router: Router,
         private actionSubject: ActionsSubject,
@@ -47,7 +40,7 @@ export class CategoryAddComponent extends CategoryBaseComponent implements OnIni
     }
 
     ngOnInit(): void {
-        let self = this;
+        const self = this;
         self.store.dispatch(new generalActions.UpdatePageHeadingAction("Category Add"));
         self.store.dispatch(new categoryActions.UpdateCurrentCategoryAction(new Category(0, "")));
 
@@ -66,13 +59,12 @@ export class CategoryAddComponent extends CategoryBaseComponent implements OnIni
     }
 
     ngOnDestroy(): void {
-        super.ngOnDestroy();
-        let self = this;
+        const self = this;
         self.subscriptionCollectorService.unsubscribe(self.SUBSCRIPTION_KEY_CATEGORY_ADD);
     }
 
     private saveEventHandler(formState: any) {
-        let self = this;
+        const self = this;
 
         let category = new Category(0,
             formState.categoryName);
@@ -84,47 +76,47 @@ export class CategoryAddComponent extends CategoryBaseComponent implements OnIni
             self.save(category);
         } else if (!dirty) {
             self.messageService.add({
-                severity: 'warning',
-                summary: 'Warning',
-                detail: 'No changes were made.'
+                severity: "warning",
+                summary: "Warning",
+                detail: "No changes were made."
             });
         } else {
             self.messageService.add({
-                severity: 'error',
-                summary: 'Error',
-                detail: 'Please enter valid values.'
+                severity: "error",
+                summary: "Error",
+                detail: "Please enter valid values."
             });
         }
     }
 
     private save(category: Category) {
-        let self = this;
+        const self = this;
         self.store.dispatch(new categoryActions.AddCategoryAction(category));
     }
 
     private setupSaveDoneHandler() {
-        let self = this;
+        const self = this;
         let s3 = self.actionSubject.subscribe(a => {
-            if (a.type == categoryActions.CATEGORY_ADD_DONE) {
+            if (a.type === categoryActions.CATEGORY_ADD_DONE) {
                 let action = <categoryActions.AddCategoryDoneAction> a;
                 let outcome = action.payload.outcome;
                 if (outcome) {
                     self.messageService.add({
-                        severity: 'success',
-                        summary: 'Success',
-                        detail: 'Successfully saved!'
+                        severity: "success",
+                        summary: "Success",
+                        detail: "Successfully saved!"
                     });
-                    self.router.navigate(['/category/list']);
-                    self.store.dispatch(new categoryActions.SetCategoryFormStateAction(null))
+                    self.router.navigate(["/category/list"]);
+                    self.store.dispatch(new categoryActions.SetCategoryFormStateAction(null));
                 } else {
                     self.messageService.add({
-                        severity: 'error',
-                        summary: 'Server Error',
-                        detail: 'There was a problem saving.'
+                        severity: "error",
+                        summary: "Server Error",
+                        detail: "There was a problem saving."
                     });
-                }            
+                }
             }
         });
-        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_ADD, s3); 
+        self.subscriptionCollectorService.addSubscription(self.SUBSCRIPTION_KEY_CATEGORY_ADD, s3);
     }
 }

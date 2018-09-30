@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
-import { Actions, Effect, toPayload } from '@ngrx/effects';
+import { Injectable } from "@angular/core";
+import { Actions, Effect, toPayload } from "@ngrx/effects";
 
-import 'rxjs/add/operator/switchMap';
+import "rxjs/add/operator/switchMap";
 
-import { CardService } from '../../services/api/card.service';
-import * as cardActions from '../actions/card.actions';
+import { CardService } from "../../services/api/card.service";
+import * as cardActions from "../actions/card.actions";
 
 @Injectable()
 export class CardEffects {
@@ -18,7 +18,7 @@ export class CardEffects {
         .ofType(cardActions.CARDS_LOAD)
         .switchMap(() => {
             return this.cardService.list()
-                .map(response => {                     
+                .map(response => {
                     return new cardActions.LoadCardsSuccessAction(response.list);
                 });
         });
@@ -27,27 +27,27 @@ export class CardEffects {
     @Effect() loadCard$ = this.actions$
         .ofType(cardActions.CARD_LOAD)
         .switchMap((action: cardActions.LoadCardAction) => {
-            let cardId = action.payload;        
+            let cardId = action.payload;
             return this.cardService.fetch(cardId)
-                .map(response => {     
+                .map(response => {
                     if (!response.card) {
                         return new cardActions.LoadCardDoneNotFoundAction();
                     } else {
                         return new cardActions.LoadCardDoneAction(response.card);
-                    }                                    
+                    }
                 });
         });
-        
+
     // tslint:disable-next-line:member-ordering
     @Effect() addCard$ = this.actions$
         .ofType(cardActions.CARD_ADD)
         .switchMap((action: cardActions.AddCardAction) => {
             let card = action.payload;
             return this.cardService.add(card)
-                .map(response => { 
-                    return new cardActions.AddCardDoneAction(response);      
+                .map(response => {
+                    return new cardActions.AddCardDoneAction(response);
                 });
-        });    
+        });
 
     // tslint:disable-next-line:member-ordering
     @Effect() editCard$ = this.actions$
@@ -55,19 +55,19 @@ export class CardEffects {
         .switchMap((action: cardActions.EditCardAction) => {
             let card = action.payload;
             return this.cardService.edit(card)
-                .map(response => { 
-                    return new cardActions.EditCardDoneAction(response);      
+                .map(response => {
+                    return new cardActions.EditCardDoneAction(response);
                 });
-        });    
+        });
 
     // tslint:disable-next-line:member-ordering
     @Effect() deleteCard$ = this.actions$
         .ofType(cardActions.CARD_DELETE)
         .switchMap((action: cardActions.DeleteCardAction) => {
-            let cardId = action.payload;            
-            return this.cardService.delete(cardId)                
-                .map(outcome => { 
-                    return new cardActions.DeleteCardDoneAction(outcome);       
+            let cardId = action.payload;
+            return this.cardService.delete(cardId)
+                .map(outcome => {
+                    return new cardActions.DeleteCardDoneAction(outcome);
                 });
-        });    
+        });
 }

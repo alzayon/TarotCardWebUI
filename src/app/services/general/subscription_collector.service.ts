@@ -8,10 +8,10 @@ export class SubscriptionCollectorService {
 
     public addSubscription(keyName: string, subscription: Subscription) {
         if (!this.subscriptionsMap.has(keyName)) {
-            this.subscriptionsMap.set(keyName, []);            
-        } 
+            this.subscriptionsMap.set(keyName, []);
+        }
         let list = this.subscriptionsMap.get(keyName);
-        list.push(subscription);        
+        list.push(subscription);
     }
 
     public unsubscribeAll() {
@@ -19,7 +19,7 @@ export class SubscriptionCollectorService {
             list.map( it => {
                 if (!it.closed) {
                     it.unsubscribe();
-                }                
+                }
             });
         });
     }
@@ -30,7 +30,7 @@ export class SubscriptionCollectorService {
             list.map( it => {
                 if (!it.closed) {
                     it.unsubscribe();
-                }   
+                }
             });
         }
     }

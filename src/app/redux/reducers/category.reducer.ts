@@ -4,35 +4,35 @@ import { ActionReducer } from "@ngrx/store";
 import * as categoryActions from "../actions/category.actions";
 
 export interface ICategoryState {
-    categorys: Array<Category>,
-    currentCategory: Category,
-    formState: ICategoryFormState
+    categorys: Array<Category>;
+    currentCategory: Category;
+    formState: ICategoryFormState;
 }
 
 export interface ICategoryFormState {
-    dirty: boolean,
-    valid: boolean,
-    categoryName: string,
-    categoryType: string
+    dirty: boolean;
+    valid: boolean;
+    categoryName: string;
+    categoryType: string;
 }
 
 const initState: ICategoryState = {
     categorys: [],
     currentCategory:  new Category(0, ""),
     formState: null
-}
+};
 
-export function categoryReducer(state = initState, action:categoryActions.Actions): ICategoryState {
+export function categoryReducer(state = initState, action: categoryActions.Actions): ICategoryState {
     switch (action.type) {
         case categoryActions.CATEGORIES_LOAD_SUCCESS: {
-            let specificAction = <categoryActions.LoadCategoriesSuccessAction> action;            
+            let specificAction = <categoryActions.LoadCategoriesSuccessAction> action;
             return Object.assign({}, state, { categorys: specificAction.payload });
         }
         case categoryActions.CATEGORY_LOAD_DONE: {
-            let specificAction = <categoryActions.LoadCategoryDoneAction> action;            
+            let specificAction = <categoryActions.LoadCategoryDoneAction> action;
             return Object.assign({}, state, { currentCategory: specificAction.payload });
         }
-        case categoryActions.CATEGORY_UPDATE_CURRENT: {        
+        case categoryActions.CATEGORY_UPDATE_CURRENT: {
             let specificAction = <categoryActions.UpdateCurrentCategoryAction> action;
             return Object.assign({}, state, { currentCategory: specificAction.payload });
         }

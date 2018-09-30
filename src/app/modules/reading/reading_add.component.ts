@@ -1,9 +1,8 @@
-import { Component } from '@angular/core';
+import { Component } from "@angular/core";
 
 @Component({
-    selector: 'reading-add',
-    templateUrl: './views/reading_add.component.html' 
+    selector: "reading-add",
+    templateUrl: "./views/reading_add.component.html"
 })
 export class ReadingAddComponent {
-
 }
